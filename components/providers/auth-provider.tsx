@@ -30,9 +30,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const supabase = createClient();
+  // During build-time prerendering, env vars may not exist.
+  // Skip Supabase initialization in that case.
+  const hasSupabaseConfig =
+    typeof window !== "undefined" ||
+    (!!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+  const supabase = hasSupabaseConfig ? createClient() : null;
 
   useEffect(() => {
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
+
     // Get initial session
     const getSession = async () => {
       const {
@@ -58,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [supabase]);
 
   const signOut = useCallback(async () => {
+    if (!supabase) return;
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
