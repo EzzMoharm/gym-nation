@@ -19,6 +19,7 @@ export const MOCK_PLANS: Partial<TrainingPlan>[] = [
     subscriber_count: 5430,
     average_rating: 4.9,
     review_count: 892,
+    image_url: "/images/training_plan.png",
   },
   {
     id: "2",
@@ -38,6 +39,7 @@ export const MOCK_PLANS: Partial<TrainingPlan>[] = [
     subscriber_count: 8200,
     average_rating: 4.7,
     review_count: 1205,
+    image_url: "/images/training_plan.png",
   },
   {
     id: "3",
@@ -57,6 +59,7 @@ export const MOCK_PLANS: Partial<TrainingPlan>[] = [
     subscriber_count: 12450,
     average_rating: 4.8,
     review_count: 3100,
+    image_url: "/images/training_plan.png",
   }
 ];
 
@@ -78,6 +81,7 @@ export const MOCK_PRODUCTS: Partial<Product>[] = [
     ingredients: "Protein Blend (Whey Protein Isolate, Whey Protein Concentrate, Whey Peptides), Cocoa, Natural and Artificial Flavor, Lecithin, Creamer, Salt, Acesulfame Potassium, Sucralose, Lactase.",
     servings: 29,
     serving_size: "1 Scoop (30.4g)",
+    images: [{ id: "img1", product_id: "1", url: "/images/whey_protein.png", alt_text: "Whey Protein", position: 1, is_primary: true }],
   },
   {
     id: "2",
@@ -96,6 +100,7 @@ export const MOCK_PRODUCTS: Partial<Product>[] = [
     ingredients: "CarnoSyn Beta-Alanine, Creatine Nitrate (NO3-T), Arginine AKG, Explosive Energy Blend, Vitamin C.",
     servings: 30,
     serving_size: "1 Scoop (6g)",
+    images: [{ id: "img2", product_id: "2", url: "/images/pre_workout.png", alt_text: "Pre Workout", position: 1, is_primary: true }],
   },
   {
     id: "3",
@@ -114,6 +119,7 @@ export const MOCK_PRODUCTS: Partial<Product>[] = [
     ingredients: "Creatine Monohydrate",
     servings: 60,
     serving_size: "1 Teaspoon (5g)",
+    images: [{ id: "img3", product_id: "3", url: "/images/whey_protein.png", alt_text: "Creatine", position: 1, is_primary: true }],
   },
   {
     id: "4",
@@ -132,6 +138,7 @@ export const MOCK_PRODUCTS: Partial<Product>[] = [
     ingredients: "Amino Blend, Energy Blend, Citric Acid, Natural and Artificial Flavor.",
     servings: 30,
     serving_size: "2 Scoops (9g)",
+    images: [{ id: "img4", product_id: "4", url: "/images/pre_workout.png", alt_text: "BCAA", position: 1, is_primary: true }],
   },
   {
     id: "5",
@@ -150,6 +157,7 @@ export const MOCK_PRODUCTS: Partial<Product>[] = [
     ingredients: "L-Citrulline, Beta-Alanine, Nitrosigine, Senactiv, Natural Caffeine.",
     servings: 25,
     serving_size: "1 Scoop (14.5g)",
+    images: [{ id: "img5", product_id: "5", url: "/images/pre_workout.png", alt_text: "Ghost Pre", position: 1, is_primary: true }],
   },
   {
     id: "6",
@@ -168,5 +176,6 @@ export const MOCK_PRODUCTS: Partial<Product>[] = [
     ingredients: "Hydrolyzed Whey Protein Isolate, Whey Protein Isolate, Natural and Artificial Flavor.",
     servings: 23,
     serving_size: "1 Scoop (30g)",
+    images: [{ id: "img6", product_id: "6", url: "/images/whey_protein.png", alt_text: "ISO Protein", position: 1, is_primary: true }],
   }
 ];

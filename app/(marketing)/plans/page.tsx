@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Clock, Target, Users } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import type { TrainingPlan } from "@/types";
 
 export const metadata: Metadata = {
@@ -20,9 +21,18 @@ function PlanCard({ plan }: { plan: Partial<TrainingPlan> }) {
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5"
     >
       <div className="relative aspect-video overflow-hidden bg-muted border-b border-border">
-        <div className="absolute inset-0 flex items-center justify-center text-4xl font-black text-muted-foreground/10 uppercase">
-          {plan.goal}
-        </div>
+        {plan.image_url ? (
+          <Image
+            src={plan.image_url}
+            alt={plan.name!}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-4xl font-black text-muted-foreground/10 uppercase">
+            {plan.goal}
+          </div>
+        )}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           <Badge className="bg-background text-foreground hover:bg-background border-none font-semibold shadow-sm">
             {plan.difficulty?.toUpperCase()}
@@ -75,7 +85,7 @@ function PlanCard({ plan }: { plan: Partial<TrainingPlan> }) {
 
 export default function PlansPage() {
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen pt-28 pb-12">
       <Container>
         <div className="mb-12 max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight mb-4">Training Plans</h1>

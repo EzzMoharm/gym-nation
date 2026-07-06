@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function ShopPage() {
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen pt-28 pb-12">
       <Container>
         {/* Page Header */}
         <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">

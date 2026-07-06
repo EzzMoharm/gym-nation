@@ -5,6 +5,7 @@ import { MOCK_PLANS } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { Star, Clock, Dumbbell, Target, ShieldCheck } from "lucide-react";
+import Image from "next/image";
 import type { TrainingPlan } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -32,13 +33,23 @@ export default async function PlanDetailPage({
   }
 
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen pt-28 pb-12">
       <Container>
         <div className="grid gap-12 lg:grid-cols-3">
           {/* Main Info */}
           <div className="lg:col-span-2 space-y-8">
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-muted border border-border flex items-center justify-center">
-              <span className="text-6xl font-black text-muted-foreground/10 uppercase tracking-widest">{plan.category}</span>
+              {plan.image_url ? (
+                <Image
+                  src={plan.image_url}
+                  alt={plan.name}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <span className="text-6xl font-black text-muted-foreground/10 uppercase tracking-widest">{plan.category}</span>
+              )}
             </div>
             
             <div>

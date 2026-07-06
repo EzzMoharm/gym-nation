@@ -6,6 +6,8 @@ import { Star, ShoppingBag, Heart } from "lucide-react";
 import { formatPrice, calcDiscount } from "@/lib/utils";
 import type { Product } from "@/types";
 import { useCartStore } from "@/lib/store/cart";
+import { motion } from "motion/react";
+import Image from "next/image";
 import { toast } from "sonner";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -27,12 +29,19 @@ export function ProductCard({ product }: { product: Product }) {
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5"
     >
       {/* Image area */}
-      <div className="relative aspect-square overflow-hidden bg-muted">
-        <div className="flex h-full items-center justify-center text-6xl font-black text-muted-foreground/10">
-          GN
-        </div>
-
-        {/* Badges */}
+      <div className="relative aspect-square overflow-hidden bg-muted flex items-center justify-center p-4">
+        {product.images && product.images[0] ? (
+          <Image
+            src={product.images[0].url}
+            alt={product.name}
+            fill
+            className="object-contain transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="text-6xl font-black text-muted-foreground/10">GN</div>
+        )}
+        
+        {/* Quick actions overlay */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           {discount > 0 && (
             <Badge className="bg-destructive text-destructive-foreground text-xs font-bold">

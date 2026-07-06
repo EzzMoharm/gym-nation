@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { MOCK_PRODUCTS } from "@/lib/mock-data";
 import { formatPrice } from "@/lib/utils";
 import { Plus, MoreHorizontal } from "lucide-react";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Manage Products | Gym Nation Admin",
@@ -39,9 +40,18 @@ export default function AdminProductsPage() {
                 <tr key={product.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground/50 shrink-0">
-                        GN
-                      </div>
+                      <div className="relative h-10 w-10 rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
+                      {product.images && product.images[0] ? (
+                        <Image
+                          src={product.images[0].url}
+                          alt={product.name!}
+                          fill
+                          className="object-contain p-1"
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-muted-foreground/50">GN</span>
+                      )}
+                    </div>
                       <div className="font-medium text-foreground">{product.name}</div>
                     </div>
                   </td>

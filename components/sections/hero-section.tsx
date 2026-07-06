@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import Image from "next/image";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/shared/container";
 import { ArrowRight, Play, Zap, Shield, Truck } from "lucide-react";
@@ -9,8 +10,18 @@ import { ArrowRight, Play, Zap, Shield, Truck } from "lucide-react";
 export function HeroSection() {
   return (
     <section className="relative min-h-dvh flex items-center overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 gradient-hero" />
+      {/* Background Image & Overlay */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/hero_bg.png"
+          alt="Premium Gym Environment"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-background/80 dark:bg-background/90" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+      </div>
 
       {/* Animated grid pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
@@ -28,7 +39,7 @@ export function HeroSection() {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-brand/5 rounded-full blur-3xl animate-pulse delay-1000" />
 
-      <Container className="relative z-10">
+      <Container className="relative z-10 pt-24 pb-12">
         <div className="mx-auto max-w-4xl text-center">
           {/* Badge */}
           <motion.div

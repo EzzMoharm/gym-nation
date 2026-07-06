@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, ShoppingCart, Package } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | Gym Nation",
@@ -105,13 +106,13 @@ export default function AdminDashboardPage() {
           <CardContent>
             <div className="space-y-8">
               {[
-                { name: "Gold Standard Whey", sales: 234 },
-                { name: "C4 Pre-Workout", sales: 189 },
-                { name: "Creatine Monohydrate", sales: 156 },
+                { name: "Gold Standard Whey", sales: 234, img: "/images/whey_protein.png" },
+                { name: "C4 Pre-Workout", sales: 189, img: "/images/pre_workout.png" },
+                { name: "Creatine Monohydrate", sales: 156, img: "/images/whey_protein.png" },
               ].map((product, i) => (
                 <div key={i} className="flex items-center">
-                  <div className="w-9 h-9 rounded bg-muted flex items-center justify-center text-xs font-bold shrink-0">
-                    GN
+                  <div className="relative w-9 h-9 rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
+                    <Image src={product.img} alt={product.name} fill className="object-contain p-1" />
                   </div>
                   <div className="ml-4 space-y-1">
                     <p className="text-sm font-medium leading-none">{product.name}</p>

@@ -70,8 +70,17 @@ export function CartDrawer() {
             <div className="flex flex-col gap-6">
               {items.map((item) => (
                 <div key={item.product.id} className="flex gap-4">
-                  <div className="h-24 w-24 rounded-xl bg-muted shrink-0 border border-border flex items-center justify-center font-bold text-muted-foreground/20 text-2xl">
-                    GN
+                  <div className="relative h-24 w-24 rounded-xl bg-muted shrink-0 border border-border flex items-center justify-center overflow-hidden">
+                    {item.product.images && item.product.images[0] ? (
+                      <Image
+                        src={item.product.images[0].url}
+                        alt={item.product.name}
+                        fill
+                        className="object-contain p-2"
+                      />
+                    ) : (
+                      <span className="font-bold text-muted-foreground/20 text-2xl">GN</span>
+                    )}
                   </div>
                   <div className="flex flex-1 flex-col justify-between">
                     <div className="flex justify-between items-start gap-2">

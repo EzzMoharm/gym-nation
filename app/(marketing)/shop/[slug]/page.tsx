@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
+import Image from "next/image";
 import { MOCK_PRODUCTS } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { formatPrice, calcDiscount } from "@/lib/utils";
@@ -37,15 +38,25 @@ export default async function ProductPage({
     : 0;
 
   return (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen pt-28 pb-12">
       <Container>
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Product Images (Placeholder) */}
-          <div className="flex flex-col gap-4">
+          <div className="space-y-4">
             <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted border border-border">
-              <div className="absolute inset-0 flex items-center justify-center text-8xl font-black text-muted-foreground/10">
-                GN
-              </div>
+              {product.images && product.images[0] ? (
+                <Image
+                  src={product.images[0].url}
+                  alt={product.name}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-8xl font-black text-muted-foreground/10">
+                  GN
+                </div>
+              )}
               {discount > 0 && (
                 <div className="absolute top-4 left-4 rounded-full bg-destructive px-3 py-1 text-xs font-bold text-destructive-foreground">
                   Save {discount}%

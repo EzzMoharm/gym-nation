@@ -10,6 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, Shield, Lock, CreditCard } from "lucide-react";
+import Image from "next/image";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen py-12 bg-muted/10">
+    <div className="min-h-screen pt-28 pb-12 bg-muted/10">
       <Container>
         <div className="mb-10 text-center">
           <h1 className="text-3xl font-bold tracking-tight">Checkout</h1>
@@ -154,9 +155,18 @@ export default function CheckoutPage() {
               <div className="space-y-4 mb-6">
                 {items.map((item) => (
                   <div key={item.product.id} className="flex gap-4">
-                    <div className="relative h-16 w-16 bg-muted rounded-lg border border-border flex items-center justify-center font-bold text-muted-foreground/20 text-xs shrink-0">
-                      GN
-                      <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-brand-foreground">
+                    <div className="relative h-16 w-16 bg-muted rounded-lg border border-border flex items-center justify-center overflow-hidden shrink-0">
+                      {item.product.images && item.product.images[0] ? (
+                        <Image
+                          src={item.product.images[0].url}
+                          alt={item.product.name}
+                          fill
+                          className="object-contain p-1"
+                        />
+                      ) : (
+                        <span className="font-bold text-muted-foreground/20 text-xs">GN</span>
+                      )}
+                      <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-brand-foreground z-10">
                         {item.quantity}
                       </span>
                     </div>
