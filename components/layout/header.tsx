@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
-import { ShoppingBag, Heart, User, Search } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Heart, User, Search } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { Logo } from "./logo";
 import { NavLinks } from "./nav-links";
 import { MobileNav } from "./mobile-nav";
@@ -16,14 +16,8 @@ import { CartDrawer } from "@/components/shop/cart-drawer";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
   const { scrollY } = useScroll();
   const { user } = useAuth();
-  const cartItemCount = useCartStore((state) => state.totalItems);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 20);

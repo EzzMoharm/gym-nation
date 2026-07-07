@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingBag, X, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
+import { ShoppingBag, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useCartStore } from "@/lib/store/cart";
@@ -20,6 +20,7 @@ export function CartDrawer() {
   const removeItem = useCartStore((state) => state.removeItem);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
@@ -60,7 +61,7 @@ export function CartDrawer() {
               </div>
               <h3 className="text-xl font-semibold tracking-tight">Your cart is empty</h3>
               <p className="text-sm text-muted-foreground max-w-xs">
-                Looks like you haven't added anything to your cart yet. Discover our premium supplements.
+                Looks like you haven&apos;t added anything to your cart yet. Discover our premium supplements.
               </p>
               <Link href="/shop" className={buttonVariants({ className: "mt-4 rounded-xl" })} onClick={() => setIsOpen(false)}>
                 Start Shopping

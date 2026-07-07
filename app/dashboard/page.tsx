@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, CreditCard, Heart, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -21,7 +21,7 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="mt-2 text-muted-foreground">
-          Welcome back! Here's an overview of your account.
+          Welcome back! Here&apos;s an overview of your account.
         </p>
       </div>
 
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              You don't have any active training plans yet.
+              You don&apos;t have any active training plans yet.
             </p>
             <Link href="/plans" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full" })}>
               Find a Plan

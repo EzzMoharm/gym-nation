@@ -1,16 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Dumbbell, Settings, LogOut } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 
 const ADMIN_NAV_LINKS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/products", label: "Products", icon: Package },
-  { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/plans", label: "Plans", icon: Dumbbell },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
 ];
 
 export default async function AdminLayout({
@@ -27,14 +26,12 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  // Ideally, verify the user role here:
-  // const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  // if (profile?.role !== "admin") redirect("/");
-  
-  // For the sake of the showcase, we allow the authenticated user to view the admin interface.
+  if (!user.email?.startsWith("admin")) {
+    redirect("/");
+  }
 
   return (
-    <div className="flex min-h-dvh flex-col md:flex-row bg-muted/10">
+    <div className="flex min-h-dvh flex-col md:flex-row bg-muted/10 pt-16">
       {/* Sidebar */}
       <aside className="w-full md:w-64 border-r border-border bg-card shrink-0 flex flex-col">
         <div className="h-16 flex items-center px-6 border-b border-border">

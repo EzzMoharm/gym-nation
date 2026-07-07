@@ -12,48 +12,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Dumbbell, Target, ArrowRight, Users } from "lucide-react";
 
-const TRAINING_PLANS = [
-  {
-    id: "1",
-    slug: "strength-foundation",
-    name: "Strength Foundation",
-    short_description:
-      "Build a solid strength base with compound movements and progressive overload.",
-    duration_weeks: 8,
-    difficulty: "beginner",
-    goal: "Build Muscle",
-    price: 29.99,
-    subscriber_count: 3420,
-    average_rating: 4.8,
-  },
-  {
-    id: "2",
-    slug: "shred-30",
-    name: "Shred 30",
-    short_description:
-      "Aggressive 30-day fat loss program combining HIIT, strength, and nutrition.",
-    duration_weeks: 4,
-    difficulty: "intermediate",
-    goal: "Lose Fat",
-    price: 24.99,
-    subscriber_count: 5891,
-    average_rating: 4.9,
-  },
-  {
-    id: "3",
-    slug: "powerlifting-peak",
-    name: "Powerlifting Peak",
-    short_description:
-      "Peaking program for squat, bench, and deadlift. Designed for competition prep.",
-    duration_weeks: 12,
-    difficulty: "advanced",
-    goal: "Increase Strength",
-    price: 39.99,
-    subscriber_count: 1876,
-    average_rating: 4.7,
-  },
-];
-
 const difficultyColors: Record<string, string> = {
   beginner: "bg-success/10 text-success border-success/20",
   intermediate: "bg-warning/10 text-warning border-warning/20",
@@ -61,7 +19,12 @@ const difficultyColors: Record<string, string> = {
   elite: "bg-brand/10 text-brand border-brand/20",
 };
 
-export function TrainingPlansSection() {
+interface TrainingPlansSectionProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  plans: any[];
+}
+
+export function TrainingPlansSection({ plans }: TrainingPlansSectionProps) {
   return (
     <section className="section-padding">
       <Container>
@@ -73,7 +36,7 @@ export function TrainingPlansSection() {
         </AnimatedSection>
 
         <StaggerContainer className="grid gap-6 md:grid-cols-3">
-          {TRAINING_PLANS.map((plan) => (
+          {plans.map((plan) => (
             <StaggerItem key={plan.id}>
               <Link
                 href={`/plans/${plan.slug}`}
@@ -88,19 +51,21 @@ export function TrainingPlansSection() {
                   {/* Difficulty badge */}
                   <Badge
                     variant="outline"
-                    className={`absolute top-3 left-3 ${difficultyColors[plan.difficulty]} capitalize`}
+                    className={`absolute top-3 left-3 ${plan.difficulty ? difficultyColors[plan.difficulty.toLowerCase()] || difficultyColors.beginner : difficultyColors.beginner} capitalize`}
                   >
-                    {plan.difficulty}
+                    {plan.difficulty || 'beginner'}
                   </Badge>
                 </div>
 
                 {/* Content */}
                 <div className="flex flex-1 flex-col p-5">
                   {/* Goal */}
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-brand">
-                    <Target className="h-3 w-3" />
-                    {plan.goal}
-                  </div>
+                  {plan.goal && (
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-brand">
+                      <Target className="h-3 w-3" />
+                      {plan.goal}
+                    </div>
+                  )}
 
                   {/* Name */}
                   <h3 className="mt-2 text-lg font-bold group-hover:text-brand transition-colors">
@@ -116,11 +81,11 @@ export function TrainingPlansSection() {
                   <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
-                      {plan.duration_weeks} weeks
+                      {plan.duration_weeks || 4} weeks
                     </span>
                     <span className="flex items-center gap-1">
                       <Users className="h-3.5 w-3.5" />
-                      {plan.subscriber_count.toLocaleString()} enrolled
+                      {(plan.subscriber_count || 0).toLocaleString()} enrolled
                     </span>
                   </div>
 

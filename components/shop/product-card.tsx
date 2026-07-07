@@ -2,20 +2,35 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Star, ShoppingBag, Heart } from "lucide-react";
+import { ShoppingBag, Heart } from "lucide-react";
 import { formatPrice, calcDiscount } from "@/lib/utils";
-import type { Product } from "@/types";
 import { useCartStore } from "@/lib/store/cart";
-import { motion } from "motion/react";
 import Image from "next/image";
 import { toast } from "sonner";
 
-export function ProductCard({ product }: { product: Product }) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function ProductCard({ product }: { product: any }) {
   const addItem = useCartStore((state) => state.addItem);
-  
+
   const discount = product.compare_at_price
     ? calcDiscount(product.compare_at_price, product.price)
     : 0;
+
+  // Support both flat (Supabase) and nested (mock) image formats
+  const imageUrl =
+    product.image_url ||
+    (product.images && product.images[0]?.url) ||
+    "";
+
+  // Support both flat and nested brand/category
+  const brandName =
+    typeof product.brand === "string"
+      ? product.brand
+      : product.brand?.name || "";
+  const categoryName =
+    typeof product.category === "string"
+      ? product.category
+      : product.category?.name || "";
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,9 +45,9 @@ export function ProductCard({ product }: { product: Product }) {
     >
       {/* Image area */}
       <div className="relative aspect-square overflow-hidden bg-muted flex items-center justify-center p-4">
-        {product.images && product.images[0] ? (
+        {imageUrl ? (
           <Image
-            src={product.images[0].url}
+            src={imageUrl}
             alt={product.name}
             fill
             className="object-contain transition-transform duration-500 group-hover:scale-105"
@@ -80,11 +95,13 @@ export function ProductCard({ product }: { product: Product }) {
       {/* Content */}
       <div className="flex flex-1 flex-col p-4">
         {/* Brand & Category */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>{product.brand?.name}</span>
-          <span>·</span>
-          <span>{product.category?.name}</span>
-        </div>
+        {(brandName || categoryName) && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {brandName && <span>{brandName}</span>}
+            {brandName && categoryName && <span>·</span>}
+            {categoryName && <span>{categoryName}</span>}
+          </div>
+        )}
 
         {/* Name */}
         <h3 className="mt-1.5 font-semibold leading-snug line-clamp-2 group-hover:text-brand transition-colors">
@@ -95,25 +112,6 @@ export function ProductCard({ product }: { product: Product }) {
         {product.flavor && (
           <p className="mt-1 text-xs text-muted-foreground">{product.flavor}</p>
         )}
-
-        {/* Rating */}
-        <div className="mt-2 flex items-center gap-1.5">
-          <div className="flex">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-3.5 w-3.5 ${
-                  i < Math.floor(product.average_rating)
-                    ? "fill-warning text-warning"
-                    : "fill-muted text-muted"
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground">
-            ({product.review_count.toLocaleString()})
-          </span>
-        </div>
 
         {/* Price */}
         <div className="mt-auto pt-3 flex items-baseline gap-2">

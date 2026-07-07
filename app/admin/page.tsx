@@ -1,20 +1,27 @@
 import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Users, ShoppingCart, Package } from "lucide-react";
+import { DollarSign, ShoppingCart, Package, Dumbbell } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
+import { getProducts, getPlans } from "@/app/admin/actions";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | Gym Nation",
 };
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const { data: products } = await getProducts();
+  const { data: plans } = await getPlans();
+
+  const activeProducts = products?.filter((p: { is_active?: boolean }) => p.is_active) || [];
+  const activePlans = plans?.filter((p: { is_active?: boolean }) => p.is_active) || [];
+
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
         <p className="text-muted-foreground mt-2">
-          Here's what's happening with your store today.
+          Here&apos;s what&apos;s happening with your store today.
         </p>
       </div>
 
@@ -36,14 +43,14 @@ export default function AdminDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Subscriptions
+              Active Plans
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Dumbbell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
-            <p className="text-xs text-success mt-1 flex items-center">
-              +180.1% from last month
+            <div className="text-2xl font-bold">{activePlans.length}</div>
+            <p className="text-xs text-muted-foreground mt-1 flex items-center">
+              Total available plans
             </p>
           </CardContent>
         </Card>
@@ -69,9 +76,9 @@ export default function AdminDashboardPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">142</div>
+            <div className="text-2xl font-bold">{activeProducts.length}</div>
             <p className="text-xs text-muted-foreground mt-1 flex items-center">
-              +4 new this week
+              Total available products
             </p>
           </CardContent>
         </Card>
@@ -105,23 +112,26 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-8">
-              {[
-                { name: "Gold Standard Whey", sales: 234, img: "/images/whey_protein.png" },
-                { name: "C4 Pre-Workout", sales: 189, img: "/images/pre_workout.png" },
-                { name: "Creatine Monohydrate", sales: 156, img: "/images/whey_protein.png" },
-              ].map((product, i) => (
-                <div key={i} className="flex items-center">
+              {products?.slice(0, 3).map((product: { id: string; name: string; image_url?: string; price?: number }) => (
+                <div key={product.id} className="flex items-center">
                   <div className="relative w-9 h-9 rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
-                    <Image src={product.img} alt={product.name} fill className="object-contain p-1" />
+                    {product.image_url ? (
+                      <Image src={product.image_url} alt={product.name} fill className="object-contain p-1" />
+                    ) : (
+                      <span className="text-[8px] font-bold text-muted-foreground/50">GN</span>
+                    )}
                   </div>
                   <div className="ml-4 space-y-1">
                     <p className="text-sm font-medium leading-none">{product.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {product.sales} sales
+                      {product.price ? formatPrice(product.price) : ""}
                     </p>
                   </div>
                 </div>
               ))}
+              {(!products || products.length === 0) && (
+                <p className="text-sm text-muted-foreground">No products available yet.</p>
+              )}
             </div>
           </CardContent>
         </Card>

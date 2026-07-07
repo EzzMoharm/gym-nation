@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
-import { MOCK_PLANS } from "@/lib/mock-data";
+import { getPlanBySlug } from "@/app/admin/actions";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { Star, Clock, Dumbbell, Target, ShieldCheck } from "lucide-react";
 import Image from "next/image";
-import type { TrainingPlan } from "@/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const plan = MOCK_PLANS.find((p) => p.slug === slug);
+  const { data: plan } = await getPlanBySlug(slug);
   
   if (!plan) return { title: "Plan Not Found" };
   
@@ -26,7 +25,7 @@ export default async function PlanDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const plan = MOCK_PLANS.find((p) => p.slug === slug) as TrainingPlan;
+  const { data: plan } = await getPlanBySlug(slug);
 
   if (!plan) {
     notFound();
@@ -55,7 +54,7 @@ export default async function PlanDetailPage({
             <div>
               <div className="flex items-center gap-2 text-sm text-brand font-medium mb-3">
                 <span className="px-2 py-1 rounded-md bg-brand/10">{plan.difficulty.toUpperCase()}</span>
-                <span className="px-2 py-1 rounded-md bg-muted text-foreground">{plan.category}</span>
+                {plan.category && <span className="px-2 py-1 rounded-md bg-muted text-foreground">{plan.category}</span>}
               </div>
               <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">{plan.name}</h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
@@ -68,18 +67,18 @@ export default async function PlanDetailPage({
                 <span className="text-muted-foreground text-sm flex items-center gap-1.5"><Clock className="w-4 h-4"/> Duration</span>
                 <span className="font-bold text-lg">{plan.duration_weeks} Weeks</span>
               </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground text-sm flex items-center gap-1.5"><Target className="w-4 h-4"/> Goal</span>
-                <span className="font-bold text-lg">{plan.goal}</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground text-sm flex items-center gap-1.5"><Dumbbell className="w-4 h-4"/> Equipment</span>
-                <span className="font-bold text-lg text-balance">{plan.equipment_needed?.join(", ")}</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="text-muted-foreground text-sm flex items-center gap-1.5"><Star className="w-4 h-4 text-warning"/> Rating</span>
-                <span className="font-bold text-lg">{plan.average_rating} ({plan.review_count})</span>
-              </div>
+              {plan.goal && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-muted-foreground text-sm flex items-center gap-1.5"><Target className="w-4 h-4"/> Goal</span>
+                  <span className="font-bold text-lg">{plan.goal}</span>
+                </div>
+              )}
+              {plan.equipment_needed && plan.equipment_needed.length > 0 && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-muted-foreground text-sm flex items-center gap-1.5"><Dumbbell className="w-4 h-4"/> Equipment</span>
+                  <span className="font-bold text-lg text-balance">{plan.equipment_needed.join(", ")}</span>
+                </div>
+              )}
             </div>
 
             <div>
@@ -87,7 +86,7 @@ export default async function PlanDetailPage({
               <div className="prose prose-neutral dark:prose-invert max-w-none">
                 <p>
                   This program is designed to guide you step-by-step through {plan.duration_weeks} weeks of rigorous training. 
-                  Every workout, set, and rep is explicitly laid out to ensure you achieve maximum {plan.goal.toLowerCase()}.
+                  {plan.goal ? ` Every workout, set, and rep is explicitly laid out to ensure you achieve maximum ${plan.goal.toLowerCase()}.` : ""}
                 </p>
                 <ul>
                   <li>Detailed daily workout splits</li>
@@ -118,7 +117,7 @@ export default async function PlanDetailPage({
               </p>
 
               <div className="space-y-4 pt-6 border-t border-border">
-                <h4 className="font-semibold text-sm">What's included:</h4>
+                <h4 className="font-semibold text-sm">What&apos;s included:</h4>
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-success">✓</span> Full {plan.duration_weeks}-week schedule

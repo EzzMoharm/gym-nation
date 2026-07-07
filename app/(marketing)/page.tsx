@@ -5,14 +5,18 @@ import { TrainingPlansSection } from "@/components/sections/training-plans-secti
 import { TestimonialsSection } from "@/components/sections/testimonials";
 import { NewsletterSection } from "@/components/sections/newsletter-section";
 import { FeaturesSection } from "@/components/sections/features-section";
+import { getFeaturedProducts, getFeaturedPlans } from "@/app/admin/actions";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { data: featuredProducts } = await getFeaturedProducts();
+  const { data: featuredPlans } = await getFeaturedPlans();
+
   return (
     <>
       <HeroSection />
-      <FeaturedProducts />
+      <FeaturedProducts products={featuredProducts || []} />
       <CategoriesSection />
-      <TrainingPlansSection />
+      <TrainingPlansSection plans={featuredPlans || []} />
       <FeaturesSection />
       <TestimonialsSection />
       <NewsletterSection />

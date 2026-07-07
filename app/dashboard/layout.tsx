@@ -39,18 +39,7 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      {/* Mini Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Logo />
-          <div className="flex items-center gap-4">
-            <Link href="/shop" className={buttonVariants({ variant: "ghost", size: "sm" })}>
-              Back to Shop
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="flex min-h-dvh flex-col pt-16">
 
       <Container className="flex-1 py-8">
         <div className="flex flex-col gap-8 md:flex-row md:gap-12">

@@ -61,8 +61,8 @@ export function RegisterForm() {
 
       toast.success("Account created! Please check your email to verify.");
       router.push("/login");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create account.");
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to create account.");
     } finally {
       setIsLoading(false);
     }
@@ -78,8 +78,8 @@ export function RegisterForm() {
         },
       });
       if (error) throw error;
-    } catch (error: any) {
-      toast.error(error.message || "Failed to login with Google");
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to login with Google");
       setIsLoading(false);
     }
   };

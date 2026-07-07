@@ -1,9 +1,17 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Container } from "@/components/shared/container";
 import { buttonVariants } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function CheckoutSuccessPage() {
+  const [orderId, setOrderId] = useState("");
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOrderId(Math.floor(Math.random() * 100000).toString());
+  }, []);
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12">
       <Container className="max-w-lg text-center">
@@ -13,8 +21,8 @@ export default function CheckoutSuccessPage() {
         
         <h1 className="text-4xl font-black tracking-tight mb-4">Order Confirmed!</h1>
         <p className="text-lg text-muted-foreground mb-8">
-          Thank you for your purchase. Your order #GN-{Math.floor(Math.random() * 100000)} has been placed successfully.
-          We'll send you a confirmation email shortly.
+          Thank you for your purchase. Your order #GN-{orderId} has been placed successfully.
+          We&apos;ll send you a confirmation email shortly.
         </p>
 
         <div className="space-y-4">

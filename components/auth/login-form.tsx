@@ -52,10 +52,14 @@ export function LoginForm() {
       }
 
       toast.success("Successfully logged in");
-      router.push("/dashboard");
+      if (data.email.toLowerCase().startsWith("admin")) {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
       router.refresh(); // Force refresh to update server components with new session
-    } catch (error: any) {
-      toast.error(error.message || "Failed to log in. Please check your credentials.");
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to log in. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -71,8 +75,8 @@ export function LoginForm() {
         },
       });
       if (error) throw error;
-    } catch (error: any) {
-      toast.error(error.message || "Failed to login with Google");
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to login with Google");
       setIsLoading(false);
     }
   };

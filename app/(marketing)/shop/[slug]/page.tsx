@@ -2,16 +2,15 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
 import Image from "next/image";
-import { MOCK_PRODUCTS } from "@/lib/mock-data";
+import { getProductBySlug } from "@/app/admin/actions";
 import { Button } from "@/components/ui/button";
 import { formatPrice, calcDiscount } from "@/lib/utils";
-import { Star, ShoppingBag, Heart, Shield, Truck, RotateCcw } from "lucide-react";
-import type { Product } from "@/types";
+import { ShoppingBag, Heart, Shield, Truck, RotateCcw } from "lucide-react";
 import { AddToCartButton } from "./add-to-cart-button";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.slug === slug);
+  const { data: product } = await getProductBySlug(slug);
   
   if (!product) return { title: "Product Not Found" };
   
@@ -27,7 +26,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.slug === slug) as Product;
+  const { data: product } = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
@@ -41,12 +40,12 @@ export default async function ProductPage({
     <div className="min-h-screen pt-28 pb-12">
       <Container>
         <div className="grid gap-12 lg:grid-cols-2">
-          {/* Product Images (Placeholder) */}
+          {/* Product Image */}
           <div className="space-y-4">
             <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted border border-border">
-              {product.images && product.images[0] ? (
+              {product.image_url ? (
                 <Image
-                  src={product.images[0].url}
+                  src={product.image_url}
                   alt={product.name}
                   fill
                   className="object-contain"
@@ -63,33 +62,18 @@ export default async function ProductPage({
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="aspect-square rounded-xl bg-muted border border-border flex items-center justify-center font-bold text-muted-foreground/20">
-                  {i}
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <div className="flex items-center gap-2 text-sm text-brand font-medium mb-3">
-              <span>{product.brand?.name}</span>
-            </div>
+            {product.brand && (
+              <div className="flex items-center gap-2 text-sm text-brand font-medium mb-3">
+                <span>{product.brand}</span>
+              </div>
+            )}
             
             <h1 className="text-4xl font-bold tracking-tight mb-2">{product.name}</h1>
             
-            <div className="flex items-center gap-4 mb-6">
-              <div className="flex items-center gap-1">
-                <Star className="h-5 w-5 fill-warning text-warning" />
-                <span className="font-semibold">{product.average_rating}</span>
-                <span className="text-muted-foreground">
-                  ({product.review_count.toLocaleString()} reviews)
-                </span>
-              </div>
-            </div>
-
             <div className="flex items-baseline gap-3 mb-8">
               <span className="text-3xl font-bold">{formatPrice(product.price)}</span>
               {product.compare_at_price && (
@@ -120,6 +104,12 @@ export default async function ProductPage({
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Serving Size</span>
                   <span className="font-medium">{product.serving_size}</span>
+                </div>
+              )}
+              {product.category && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Category</span>
+                  <span className="font-medium">{product.category}</span>
                 </div>
               )}
             </div>
@@ -154,7 +144,7 @@ export default async function ProductPage({
           </div>
         </div>
 
-        {/* Product Details Tabs Placeholder */}
+        {/* Product Details */}
         <div className="mt-24 border-t border-border pt-16">
           <h2 className="text-2xl font-bold mb-8">Product Details</h2>
           <div className="grid md:grid-cols-2 gap-12">

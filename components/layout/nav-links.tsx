@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "@/lib/constants";
+import { useAuth } from "@/components/providers/auth-provider";
 
 interface NavLinksProps {
   className?: string;
@@ -17,6 +18,9 @@ export function NavLinks({
   orientation = "horizontal",
 }: NavLinksProps) {
   const pathname = usePathname();
+  const { user } = useAuth();
+  
+  const isAdmin = user?.email?.startsWith("admin");
 
   return (
     <nav
@@ -56,6 +60,25 @@ export function NavLinks({
           </Link>
         );
       })}
+      
+      {isAdmin && (
+        <Link
+          href="/admin"
+          onClick={onLinkClick}
+          className={cn(
+            "relative rounded-md px-3 py-2 text-sm font-bold text-brand transition-colors hover:text-brand-light",
+            orientation === "vertical" && "text-base px-4 py-3"
+          )}
+        >
+          Admin
+          {pathname.startsWith("/admin") && orientation === "horizontal" && (
+            <span className="absolute bottom-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-brand" />
+          )}
+          {pathname.startsWith("/admin") && orientation === "vertical" && (
+            <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-brand" />
+          )}
+        </Link>
+      )}
     </nav>
   );
 }

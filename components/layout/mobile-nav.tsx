@@ -1,7 +1,7 @@
 "use client";
 
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Menu, ShoppingBag, User, Heart } from "lucide-react";
 import { Logo } from "./logo";
 import { NavLinks } from "./nav-links";

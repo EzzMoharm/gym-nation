@@ -1,51 +1,51 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getProducts } from "@/app/admin/actions";
+import { getPlans } from "@/app/admin/actions";
 import { formatPrice } from "@/lib/utils";
 import { Plus, Pencil } from "lucide-react";
 import Image from "next/image";
-import { ProductDeleteButton } from "./delete-button";
+import { PlanDeleteButton } from "./delete-button";
 
 export const metadata: Metadata = {
-  title: "Manage Products | Gym Nation Admin",
+  title: "Manage Plans | Gym Nation Admin",
 };
 
-export default async function AdminProductsPage() {
-  const { data: products } = await getProducts();
+export default async function AdminPlansPage() {
+  const { data: plans } = await getPlans();
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Products</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Training Plans</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your product catalog. {products.length} product
-            {products.length !== 1 ? "s" : ""} total.
+            Manage your training plans. {plans.length} plan
+            {plans.length !== 1 ? "s" : ""} total.
           </p>
         </div>
-        <Link href="/admin/products/new">
+        <Link href="/admin/plans/new">
           <Button className="gap-2 bg-brand hover:bg-brand-light text-brand-foreground">
             <Plus className="h-4 w-4" />
-            Add Product
+            Add Plan
           </Button>
         </Link>
       </div>
 
       <div className="rounded-xl border border-border bg-card">
-        {products.length === 0 ? (
+        {plans.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="text-6xl font-black text-muted-foreground/10 mb-4">
               GN
             </div>
-            <h3 className="text-lg font-semibold mb-1">No products yet</h3>
+            <h3 className="text-lg font-semibold mb-1">No plans yet</h3>
             <p className="text-muted-foreground text-sm mb-6">
-              Add your first product to get started.
+              Add your first training plan to get started.
             </p>
-            <Link href="/admin/products/new">
+            <Link href="/admin/plans/new">
               <Button className="gap-2 bg-brand hover:bg-brand-light text-brand-foreground">
                 <Plus className="h-4 w-4" />
-                Add Product
+                Add Plan
               </Button>
             </Link>
           </div>
@@ -54,39 +54,41 @@ export default async function AdminProductsPage() {
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Product</th>
+                  <th className="px-6 py-4 font-medium">Plan</th>
                   <th className="px-6 py-4 font-medium">Price</th>
-                  <th className="px-6 py-4 font-medium">Category</th>
+                  <th className="px-6 py-4 font-medium">Duration</th>
+                  <th className="px-6 py-4 font-medium">Difficulty</th>
                   <th className="px-6 py-4 font-medium">Status</th>
                   <th className="px-6 py-4 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {products.map(
-                  (product: {
+                {plans.map(
+                  (plan: {
                     id: string;
                     name: string;
                     slug: string;
                     price: number;
+                    duration_weeks: number;
+                    difficulty: string;
                     category: string;
-                    brand: string;
                     image_url: string;
                     is_active: boolean;
                     is_featured: boolean;
                   }) => (
                     <tr
-                      key={product.id}
+                      key={plan.id}
                       className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="relative h-10 w-10 rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
-                            {product.image_url ? (
+                            {plan.image_url ? (
                               <Image
-                                src={product.image_url}
-                                alt={product.name}
+                                src={plan.image_url}
+                                alt={plan.name}
                                 fill
-                                className="object-contain p-1"
+                                className="object-cover"
                               />
                             ) : (
                               <span className="text-xs font-bold text-muted-foreground/50">
@@ -96,32 +98,35 @@ export default async function AdminProductsPage() {
                           </div>
                           <div>
                             <div className="font-medium text-foreground">
-                              {product.name}
+                              {plan.name}
                             </div>
-                            {product.brand && (
+                            {plan.category && (
                               <div className="text-xs text-muted-foreground">
-                                {product.brand}
+                                {plan.category}
                               </div>
                             )}
                           </div>
                         </div>
                       </td>
+                      <td className="px-6 py-4">{formatPrice(plan.price)}</td>
                       <td className="px-6 py-4">
-                        {formatPrice(product.price)}
+                        {plan.duration_weeks} weeks
                       </td>
-                      <td className="px-6 py-4">{product.category || "—"}</td>
+                      <td className="px-6 py-4">
+                        <span className="capitalize">{plan.difficulty}</span>
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              product.is_active
+                              plan.is_active
                                 ? "bg-success/10 text-success"
                                 : "bg-muted text-muted-foreground"
                             }`}
                           >
-                            {product.is_active ? "Active" : "Draft"}
+                            {plan.is_active ? "Active" : "Draft"}
                           </span>
-                          {product.is_featured && (
+                          {plan.is_featured && (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand/10 text-brand">
                               Featured
                             </span>
@@ -130,7 +135,7 @@ export default async function AdminProductsPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Link href={`/admin/products/${product.id}/edit`}>
+                          <Link href={`/admin/plans/${plan.id}/edit`}>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -139,10 +144,7 @@ export default async function AdminProductsPage() {
                               <Pencil className="h-4 w-4" />
                             </Button>
                           </Link>
-                          <ProductDeleteButton
-                            id={product.id}
-                            name={product.name}
-                          />
+                          <PlanDeleteButton id={plan.id} name={plan.name} />
                         </div>
                       </td>
                     </tr>

@@ -61,8 +61,8 @@ export default function SettingsPage() {
       if (error) throw error;
 
       toast.success("Profile updated successfully");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update profile.");
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to update profile.");
     } finally {
       setIsLoading(false);
     }
