@@ -8,9 +8,10 @@ import { buttonVariants } from "@/components/ui/button";
 import { Logo } from "./logo";
 import { NavLinks } from "./nav-links";
 import { MobileNav } from "./mobile-nav";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useCartStore } from "@/lib/store/cart";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { CartDrawer } from "@/components/shop/cart-drawer";
 
@@ -73,10 +74,25 @@ export function Header() {
           {/* Account */}
           <Link
             href={user ? "/dashboard" : "/login"}
-            className={buttonVariants({ variant: "ghost", size: "icon" })}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon" }),
+              user && "hover:bg-transparent"
+            )}
             aria-label={user ? "Account" : "Sign in"}
           >
-            <User className="h-4.5 w-4.5" />
+            {user ? (
+              <Avatar className="h-7.5 w-7.5 border border-border">
+                <AvatarImage
+                  src={user.user_metadata?.avatar_url}
+                  alt={user.user_metadata?.full_name || "User avatar"}
+                />
+                <AvatarFallback className="bg-brand/10 text-brand text-[10px] font-bold">
+                  {getInitials(user.user_metadata?.full_name || user.email || "")}
+                </AvatarFallback>
+              </Avatar>
+            ) : (
+              <User className="h-4.5 w-4.5" />
+            )}
           </Link>
         </div>
       </div>
