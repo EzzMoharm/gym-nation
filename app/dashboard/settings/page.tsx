@@ -169,8 +169,8 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("File size must be under 2MB");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be under 10MB");
       return;
     }
 
@@ -248,7 +248,8 @@ export default function SettingsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      const { error } = await supabase
+      // 1. Update profiles database table
+      const { error: profileError } = await supabase
         .from("profiles")
         .update({
           full_name: data.fullName,
@@ -264,7 +265,17 @@ export default function SettingsPage() {
         })
         .eq("id", user.id);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
+
+      // 2. Also update Supabase auth metadata to sync user details globally (e.g. for the header avatar)
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          full_name: data.fullName,
+          avatar_url: avatarUrl || null,
+        }
+      });
+
+      if (authError) throw authError;
 
       toast.success("Profile updated successfully");
       reset(data); // reset dirty state
@@ -290,7 +301,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle>Profile Photo</CardTitle>
             <CardDescription>
-              Upload a high-quality square picture. Max 2MB.
+              Upload a high-quality square picture. Max 10MB.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-6">

@@ -3,6 +3,18 @@
 -- Run this in your Supabase SQL Editor
 -- ============================================
 
+-- Helper function to check if the authenticated user is an admin
+create or replace function public.is_admin()
+returns boolean as $$
+begin
+  return exists (
+    select 1 from public.profiles
+    where id = auth.uid()
+    and role = 'admin'
+  );
+end;
+$$ language plpgsql security definer;
+
 -- 1. Orders table
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),

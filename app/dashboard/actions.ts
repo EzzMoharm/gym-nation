@@ -129,6 +129,19 @@ export async function createOrder(orderData: {
 
   revalidatePath("/dashboard/orders");
   revalidatePath("/dashboard/addresses");
+
+  // Trigger email confirmation (Feature 2)
+  try {
+    const { sendOrderConfirmationEmail } = await import("@/lib/email");
+    await sendOrderConfirmationEmail(user.email || "", {
+      orderNumber: order.order_number,
+      total: order.total,
+      items: orderData.items,
+    });
+  } catch (err) {
+    console.error("Failed to send order confirmation email:", err);
+  }
+
   return { data: order, error: null };
 }
 
@@ -362,4 +375,60 @@ export async function getMySubscriptions() {
 
   if (error) return { data: [], error: error.message };
   return { data: data ?? [], error: null };
+}
+
+export async function subscribeToPlan(planId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  // Fetch plan details to get duration
+  const { data: plan } = await supabase
+    .from("training_plans")
+    .select("name, duration_weeks")
+    .eq("id", planId)
+    .single();
+
+  const durationWeeks = plan?.duration_weeks || 12;
+  const startDate = new Date();
+  const endDate = new Date();
+  endDate.setDate(startDate.getDate() + (durationWeeks * 7));
+
+  // Check if already subscribed to this plan and active
+  const { data: existing } = await supabase
+    .from("subscriptions")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("plan_id", planId)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (existing) {
+    return { error: "You are already actively subscribed to this training plan" };
+  }
+
+  const { error } = await supabase
+    .from("subscriptions")
+    .insert({
+      user_id: user.id,
+      plan_id: planId,
+      status: "active",
+      current_week: 1,
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
+    });
+
+  if (error) return { error: error.message };
+
+  // Sync email confirmation trigger (Feature 2)
+  try {
+    const { sendSubscriptionConfirmationEmail } = await import("@/lib/email");
+    await sendSubscriptionConfirmationEmail(user.email || "", plan?.name || "Premium Training Plan");
+  } catch (err) {
+    console.error("Failed to send subscription confirmation email:", err);
+  }
+
+  revalidatePath("/dashboard/subscriptions");
+  revalidatePath("/dashboard/plans");
+  return { error: null };
 }

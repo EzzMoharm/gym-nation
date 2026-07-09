@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/shared/container";
 import { getPlanBySlug } from "@/app/admin/actions";
-import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
-import { Star, Clock, Dumbbell, Target, ShieldCheck } from "lucide-react";
+import { Clock, Dumbbell, Target, ShieldCheck } from "lucide-react";
 import Image from "next/image";
+import { SubscribeButton } from "./subscribe-button";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -108,9 +108,7 @@ export default async function PlanDetailPage({
                 </p>
               )}
               
-              <Button size="lg" className="w-full h-14 rounded-xl text-lg font-bold bg-brand hover:bg-brand-light text-brand-foreground mb-4">
-                Subscribe Now
-              </Button>
+              <SubscribeButton planId={plan.id} planSlug={plan.slug} />
               
               <p className="text-xs text-center text-muted-foreground mb-6 flex items-center justify-center gap-1.5">
                 <ShieldCheck className="h-4 w-4" /> Lifetime access to this specific plan version

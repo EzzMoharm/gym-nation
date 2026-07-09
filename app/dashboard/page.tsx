@@ -27,7 +27,7 @@ export default async function DashboardPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {/* Quick Links Cards */}
-        <Card className="hover:border-brand/50 transition-colors">
+        <Card className="hover:border-brand/50 transition-colors flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Package className="h-5 w-5 text-brand" />
@@ -35,17 +35,17 @@ export default async function DashboardPage() {
             </CardTitle>
             <CardDescription>Track your shipments</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground mb-4">
               You have no recent orders. Time to restock your stack?
             </p>
-            <Link href="/shop" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full" })}>
+            <Link href="/shop" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto" })}>
               Browse Products
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-brand/50 transition-colors">
+        <Card className="hover:border-brand/50 transition-colors flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <CreditCard className="h-5 w-5 text-brand" />
@@ -53,17 +53,17 @@ export default async function DashboardPage() {
             </CardTitle>
             <CardDescription>Your training subscriptions</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground mb-4">
               You don&apos;t have any active training plans yet.
             </p>
-            <Link href="/plans" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full" })}>
+            <Link href="/plans" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto" })}>
               Find a Plan
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-brand/50 transition-colors sm:col-span-2 lg:col-span-1">
+        <Card className="hover:border-brand/50 transition-colors sm:col-span-2 lg:col-span-1 flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Heart className="h-5 w-5 text-brand" />
@@ -71,11 +71,11 @@ export default async function DashboardPage() {
             </CardTitle>
             <CardDescription>Saved for later</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground mb-4">
               Your wishlist is empty.
             </p>
-            <Link href="/shop" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full" })}>
+            <Link href="/shop" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto" })}>
               Explore
             </Link>
           </CardContent>

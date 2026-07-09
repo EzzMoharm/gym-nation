@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Heart } from "lucide-react";
-import { formatPrice, calcDiscount } from "@/lib/utils";
+import { formatPrice, calcDiscount, cn } from "@/lib/utils";
 import { useCartStore } from "@/lib/store/cart";
+import { useWishlistStore } from "@/lib/store/wishlist";
 import Image from "next/image";
 import { toast } from "sonner";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function ProductCard({ product }: { product: any }) {
   const addItem = useCartStore((state) => state.addItem);
+  const { wishlistIds, toggleWishlist } = useWishlistStore();
+  const isWishlisted = wishlistIds.includes(product.id);
 
   const discount = product.compare_at_price
     ? calcDiscount(product.compare_at_price, product.price)
@@ -73,14 +76,17 @@ export function ProductCard({ product }: { product: any }) {
         {/* Quick actions */}
         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 transition-opacity group-hover:opacity-100">
           <button
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm text-foreground transition-colors hover:bg-brand hover:text-brand-foreground"
-            aria-label="Add to wishlist"
-            onClick={(e) => {
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-colors hover:bg-brand hover:text-brand-foreground",
+              isWishlisted ? "text-brand" : "text-foreground"
+            )}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            onClick={async (e) => {
               e.preventDefault();
-              toast.success("Added to wishlist");
+              await toggleWishlist(product.id);
             }}
           >
-            <Heart className="h-4 w-4" />
+            <Heart className={cn("h-4 w-4", isWishlisted && "fill-brand text-brand")} />
           </button>
           <button
             className="flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm text-foreground transition-colors hover:bg-brand hover:text-brand-foreground"

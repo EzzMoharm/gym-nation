@@ -9,22 +9,67 @@ import { formatPrice } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Shield, Lock, CreditCard } from "lucide-react";
+import { CheckCircle2, Shield, Lock, CreditCard, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
+import { createOrder } from "@/app/dashboard/actions";
+import { toast } from "sonner";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const supabase = createClient();
   
   const items = useCartStore((state) => state.items);
   const subtotal = useCartStore((state) => state.subtotal);
   const clearCart = useCartStore((state) => state.clearCart);
 
+  // Form states
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address, setAddress] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [country, setCountry] = useState("US");
+  const [phone, setPhone] = useState("");
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
-  }, []);
+
+    async function loadUserData() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setEmail(user.email || "");
+        
+        // Fetch default address
+        const { data: addresses } = await supabase
+          .from("addresses")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("is_default", true)
+          .single();
+
+        if (addresses) {
+          const names = addresses.full_name.split(" ");
+          setFirstName(names[0] || "");
+          setLastName(names.slice(1).join(" ") || "");
+          setAddress(addresses.address_line_1 || "");
+          setAddress2(addresses.address_line_2 || "");
+          setCity(addresses.city || "");
+          setState(addresses.state || "");
+          setPostalCode(addresses.postal_code || "");
+          setCountry(addresses.country || "US");
+          setPhone(addresses.phone || "");
+        }
+      }
+    }
+
+    loadUserData();
+  }, [supabase]);
 
   if (!isMounted) return null;
 
@@ -44,15 +89,53 @@ export default function CheckoutPage() {
   const taxes = subtotal * 0.08; // 8% mock tax
   const total = subtotal + shipping + taxes;
 
-  const handleCheckout = (e: React.FormEvent) => {
+  const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Please sign in to place an order");
+        router.push("/login?redirect=/checkout");
+        return;
+      }
+
+      const orderData = {
+        items: items.map((item) => ({
+          product_id: item.product.id,
+          product_name: item.product.name,
+          product_image: item.product.images?.[0]?.url || null,
+          quantity: item.quantity,
+          unit_price: item.product.price,
+        })),
+        shipping_address: {
+          full_name: `${firstName} ${lastName}`.trim(),
+          address_line_1: address,
+          address_line_2: address2 || undefined,
+          city,
+          state,
+          postal_code: postalCode,
+          country,
+          phone: phone || undefined,
+        },
+        subtotal,
+        shipping_cost: shipping,
+        tax_amount: taxes,
+        total,
+      };
+
+      const { data: order, error } = await createOrder(orderData);
+      if (error) throw new Error(error);
+
       clearCart();
+      toast.success("Order placed successfully!");
       router.push("/checkout/success");
-    }, 2000);
+    } catch (err: any) {
+      toast.error("Failed to process checkout: " + err.message);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -76,7 +159,14 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email address</Label>
-                    <Input id="email" type="email" required className="h-11 rounded-xl" />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </div>
                 </div>
               </section>
@@ -87,23 +177,92 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2 col-span-2 sm:col-span-1">
                     <Label htmlFor="firstName">First name</Label>
-                    <Input id="firstName" required className="h-11 rounded-xl" />
+                    <Input 
+                      id="firstName" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2 col-span-2 sm:col-span-1">
                     <Label htmlFor="lastName">Last name</Label>
-                    <Input id="lastName" required className="h-11 rounded-xl" />
+                    <Input 
+                      id="lastName" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2 col-span-2">
-                    <Label htmlFor="address">Address</Label>
-                    <Input id="address" required className="h-11 rounded-xl" />
+                    <Label htmlFor="address">Address Line 1</Label>
+                    <Input 
+                      id="address" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label htmlFor="address2">Address Line 2 (Optional)</Label>
+                    <Input 
+                      id="address2" 
+                      className="h-11 rounded-xl"
+                      value={address2}
+                      onChange={(e) => setAddress2(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2 col-span-2 sm:col-span-1">
                     <Label htmlFor="city">City</Label>
-                    <Input id="city" required className="h-11 rounded-xl" />
+                    <Input 
+                      id="city" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2 sm:col-span-1">
+                    <Label htmlFor="state">State / Province</Label>
+                    <Input 
+                      id="state" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2 col-span-2 sm:col-span-1">
                     <Label htmlFor="postalCode">Postal code</Label>
-                    <Input id="postalCode" required className="h-11 rounded-xl" />
+                    <Input 
+                      id="postalCode" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={postalCode}
+                      onChange={(e) => setPostalCode(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2 sm:col-span-1">
+                    <Label htmlFor="country">Country</Label>
+                    <Input 
+                      id="country" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2 col-span-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input 
+                      id="phone" 
+                      type="tel"
+                      className="h-11 rounded-xl"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
                   </div>
                 </div>
               </section>
@@ -143,7 +302,12 @@ export default function CheckoutPage() {
                 className="w-full h-14 rounded-xl text-lg font-bold bg-brand hover:bg-brand-light text-brand-foreground"
                 disabled={isProcessing}
               >
-                {isProcessing ? "Processing..." : `Pay ${formatPrice(total)}`}
+                {isProcessing ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Processing...
+                  </span>
+                ) : `Pay ${formatPrice(total)}`}
               </Button>
             </form>
           </div>

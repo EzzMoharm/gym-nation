@@ -41,65 +41,75 @@ export async function uploadImage(formData: FormData) {
 // Products CRUD
 // ============================================
 
+function mapProduct(product: any) {
+  if (!product) return null;
+  return {
+    ...product,
+    category: product.category?.name || null,
+    brand: product.brand?.name || null,
+    image_url: product.images?.[0]?.url || "",
+  };
+}
+
 export async function getProducts() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*, category:categories(name), brand:brands(name), images:product_images(url)")
     .order("created_at", { ascending: false });
 
   if (error) return { data: [], error: error.message };
-  return { data: data ?? [], error: null };
+  return { data: (data ?? []).map(mapProduct), error: null };
 }
 
 export async function getProductById(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*, category:categories(name), brand:brands(name), images:product_images(url)")
     .eq("id", id)
     .single();
 
   if (error) return { data: null, error: error.message };
-  return { data, error: null };
+  return { data: mapProduct(data), error: null };
 }
 
 export async function getProductBySlug(slug: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*, category:categories(name), brand:brands(name), images:product_images(url)")
     .eq("slug", slug)
     .eq("is_active", true)
     .single();
 
   if (error) return { data: null, error: error.message };
-  return { data, error: null };
+  return { data: mapProduct(data), error: null };
 }
 
 export async function getActiveProducts() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*, category:categories(name), brand:brands(name), images:product_images(url)")
     .eq("is_active", true)
     .order("created_at", { ascending: false });
 
   if (error) return { data: [], error: error.message };
-  return { data: data ?? [], error: null };
+  return { data: (data ?? []).map(mapProduct), error: null };
 }
 
 export async function getFeaturedProducts() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*, category:categories(name), brand:brands(name), images:product_images(url)")
     .eq("is_active", true)
     .eq("is_featured", true)
     .order("created_at", { ascending: false });
 
   if (error) return { data: [], error: error.message };
-  return { data: data ?? [], error: null };
+  return { data: (data ?? []).map(mapProduct), error: null };
 }
 
 export async function createProduct(formData: FormData) {
@@ -385,5 +395,62 @@ export async function deletePlan(id: string) {
 
   revalidatePath("/admin/plans");
   revalidatePath("/plans");
+  return { error: null };
+}
+
+export async function getAllAdminOrders() {
+  const supabase = await createClient();
+  
+  // Make sure the caller is an admin
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { data: [], error: "Not authenticated" };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!user.email?.startsWith("admin") && profile?.role !== "admin") {
+    return { data: [], error: "Unauthorized" };
+  }
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select(`
+      *,
+      profile:profiles(full_name, email)
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) return { data: [], error: error.message };
+  return { data: data ?? [], error: null };
+}
+
+export async function updateOrderStatus(orderId: string, status: string) {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!user.email?.startsWith("admin") && profile?.role !== "admin") {
+    return { error: "Unauthorized" };
+  }
+
+  const { error } = await supabase
+    .from("orders")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("id", orderId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/orders");
+  revalidatePath("/dashboard/orders");
   return { error: null };
 }

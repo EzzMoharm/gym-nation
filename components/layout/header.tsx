@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useScroll, useMotionValueEvent } from "motion/react";
 import { Heart, User, Search } from "lucide-react";
@@ -11,6 +11,7 @@ import { MobileNav } from "./mobile-nav";
 import { cn, getInitials } from "@/lib/utils";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useCartStore } from "@/lib/store/cart";
+import { useWishlistStore } from "@/lib/store/wishlist";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { CartDrawer } from "@/components/shop/cart-drawer";
@@ -19,6 +20,13 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { scrollY } = useScroll();
   const { user } = useAuth();
+  const { loadWishlist } = useWishlistStore();
+
+  useEffect(() => {
+    if (user) {
+      loadWishlist();
+    }
+  }, [user, loadWishlist]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 20);
