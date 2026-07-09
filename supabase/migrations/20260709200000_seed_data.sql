@@ -325,41 +325,41 @@ insert into public.products (
 
 -- 5. Insert Product Images (matching the 30 products)
 insert into public.product_images (product_id, url, alt_text, position, is_primary) values
-  ('a3000000-0000-0000-0000-000000000001', '/images/whey_protein.png', 'Whey Protein Isolate', 1, true),
-  ('a3000000-0000-0000-0000-000000000002', '/images/whey_protein.png', 'ISO100 Protein', 1, true),
-  ('a3000000-0000-0000-0000-000000000003', '/images/whey_protein.png', 'Vegan Protein', 1, true),
-  ('a3000000-0000-0000-0000-000000000004', '/images/whey_protein.png', 'Micellar Casein', 1, true),
-  ('a3000000-0000-0000-0000-000000000005', '/images/whey_protein.png', 'Beef Protein Isolate', 1, true),
-  ('a3000000-0000-0000-0000-000000000006', '/images/whey_protein.png', 'Whey Plus Blend', 1, true),
+  ('a3000000-0000-0000-0000-000000000001', 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=800&auto=format&fit=crop', 'Whey Protein Isolate', 1, true),
+  ('a3000000-0000-0000-0000-000000000002', 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=800&auto=format&fit=crop', 'ISO100 Protein', 1, true),
+  ('a3000000-0000-0000-0000-000000000003', 'https://images.unsplash.com/photo-1543362906-acfc16c67564?q=80&w=800&auto=format&fit=crop', 'Vegan Protein', 1, true),
+  ('a3000000-0000-0000-0000-000000000004', 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?q=80&w=800&auto=format&fit=crop', 'Micellar Casein', 1, true),
+  ('a3000000-0000-0000-0000-000000000005', 'https://images.unsplash.com/photo-1608408821367-6a78b545fcf3?q=80&w=800&auto=format&fit=crop', 'Beef Protein Isolate', 1, true),
+  ('a3000000-0000-0000-0000-000000000006', 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=800&auto=format&fit=crop', 'Whey Plus Blend', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000007', '/images/pre_workout.png', 'C4 Original', 1, true),
-  ('a3000000-0000-0000-0000-000000000008', '/images/pre_workout.png', 'C4 Extreme', 1, true),
-  ('a3000000-0000-0000-0000-000000000009', '/images/pre_workout.png', 'Stim-Free Bulk', 1, true),
-  ('a3000000-0000-0000-0000-000000000010', '/images/pre_workout.png', 'VaporX Pump', 1, true),
-  ('a3000000-0000-0000-0000-000000000011', '/images/pre_workout.png', 'GN Ignition Pre', 1, true),
+  ('a3000000-0000-0000-0000-000000000007', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'C4 Original', 1, true),
+  ('a3000000-0000-0000-0000-000000000008', 'https://images.unsplash.com/photo-1546483875-ad9014c88eba?q=80&w=800&auto=format&fit=crop', 'C4 Extreme', 1, true),
+  ('a3000000-0000-0000-0000-000000000009', 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop', 'Stim-Free Bulk', 1, true),
+  ('a3000000-0000-0000-0000-000000000010', 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop', 'VaporX Pump', 1, true),
+  ('a3000000-0000-0000-0000-000000000011', 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop', 'GN Ignition Pre', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000012', '/images/whey_protein.png', 'Creatine Monohydrate', 1, true),
-  ('a3000000-0000-0000-0000-000000000013', '/images/whey_protein.png', 'Creatine HCL', 1, true),
-  ('a3000000-0000-0000-0000-000000000014', '/images/whey_protein.png', 'Cell-Tech Creatine', 1, true),
-  ('a3000000-0000-0000-0000-000000000015', '/images/whey_protein.png', 'GN Tri-Creatine', 1, true),
+  ('a3000000-0000-0000-0000-000000000012', 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=800&auto=format&fit=crop', 'Creatine Monohydrate', 1, true),
+  ('a3000000-0000-0000-0000-000000000013', 'https://images.unsplash.com/photo-1611078489935-0cb964de46d6?q=80&w=800&auto=format&fit=crop', 'Creatine HCL', 1, true),
+  ('a3000000-0000-0000-0000-000000000014', 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop', 'Cell-Tech Creatine', 1, true),
+  ('a3000000-0000-0000-0000-000000000015', 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?q=80&w=800&auto=format&fit=crop', 'GN Tri-Creatine', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000016', '/images/pre_workout.png', 'Amino Energy', 1, true),
-  ('a3000000-0000-0000-0000-000000000017', '/images/pre_workout.png', 'EAA Hydration', 1, true),
-  ('a3000000-0000-0000-0000-000000000018', '/images/pre_workout.png', 'All 9 Amino', 1, true),
-  ('a3000000-0000-0000-0000-000000000019', '/images/pre_workout.png', 'L-Glutamine Powder', 1, true),
-  ('a3000000-0000-0000-0000-000000000020', '/images/pre_workout.png', 'GN BCAA Fuel', 1, true),
+  ('a3000000-0000-0000-0000-000000000016', 'https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?q=80&w=800&auto=format&fit=crop', 'Amino Energy', 1, true),
+  ('a3000000-0000-0000-0000-000000000017', 'https://images.unsplash.com/photo-1610970881699-44a5587caaec?q=80&w=800&auto=format&fit=crop', 'EAA Hydration', 1, true),
+  ('a3000000-0000-0000-0000-000000000018', 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=800&auto=format&fit=crop', 'All 9 Amino', 1, true),
+  ('a3000000-0000-0000-0000-000000000019', 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=800&auto=format&fit=crop', 'L-Glutamine Powder', 1, true),
+  ('a3000000-0000-0000-0000-000000000020', 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=800&auto=format&fit=crop', 'GN BCAA Fuel', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000021', '/images/pre_workout.png', 'Athlete Multivitamin', 1, true),
-  ('a3000000-0000-0000-0000-000000000022', '/images/pre_workout.png', 'Omega-3 Fish Oil', 1, true),
-  ('a3000000-0000-0000-0000-000000000023', '/images/pre_workout.png', 'Joint Shield', 1, true),
-  ('a3000000-0000-0000-0000-000000000024', '/images/pre_workout.png', 'Sleep & Rest Aid', 1, true),
+  ('a3000000-0000-0000-0000-000000000021', 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=800&auto=format&fit=crop', 'Athlete Multivitamin', 1, true),
+  ('a3000000-0000-0000-0000-000000000022', 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?q=80&w=800&auto=format&fit=crop', 'Omega-3 Fish Oil', 1, true),
+  ('a3000000-0000-0000-0000-000000000023', 'https://images.unsplash.com/photo-1550572017-edd951b55104?q=80&w=800&auto=format&fit=crop', 'Joint Shield', 1, true),
+  ('a3000000-0000-0000-0000-000000000024', 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=800&auto=format&fit=crop', 'Sleep & Rest Aid', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000025', '/images/pre_workout.png', 'Weightlifting Belt', 1, true),
-  ('a3000000-0000-0000-0000-000000000026', '/images/pre_workout.png', 'Barbell Grips', 1, true),
-  ('a3000000-0000-0000-0000-000000000027', '/images/pre_workout.png', 'Steel Shaker Bottle', 1, true),
-  ('a3000000-0000-0000-0000-000000000028', '/images/pre_workout.png', 'Heavy Wrist Wraps', 1, true),
-  ('a3000000-0000-0000-0000-000000000029', '/images/pre_workout.png', 'Padded Lifting Straps', 1, true),
-  ('a3000000-0000-0000-0000-000000000030', '/images/pre_workout.png', 'Resistance Bands Set', 1, true);
+  ('a3000000-0000-0000-0000-000000000025', 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800&auto=format&fit=crop', 'Weightlifting Belt', 1, true),
+  ('a3000000-0000-0000-0000-000000000026', 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=800&auto=format&fit=crop', 'Barbell Grips', 1, true),
+  ('a3000000-0000-0000-0000-000000000027', 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=800&auto=format&fit=crop', 'Steel Shaker Bottle', 1, true),
+  ('a3000000-0000-0000-0000-000000000028', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'Heavy Wrist Wraps', 1, true),
+  ('a3000000-0000-0000-0000-000000000029', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'Padded Lifting Straps', 1, true),
+  ('a3000000-0000-0000-0000-000000000030', 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop', 'Resistance Bands Set', 1, true);
 
 -- 6. Insert Training Plans (5 Items)
 insert into public.training_plans (
@@ -371,7 +371,7 @@ insert into public.training_plans (
     'This 12-week program focuses on progressive overload, varied rep ranges, and strategic exercise selection to maximize muscle growth. Designed for intermediate lifters looking to break through plateaus.',
     'Build serious muscle mass over 12 weeks with this science-based hypertrophy program.',
     49.99, 99.99, 12, 'intermediate', 'Build Muscle', 'Bodybuilding',
-    array['Barbell', 'Dumbbells', 'Cables', 'Machines'], '[]'::jsonb, 'High-protein diet, moderate carbs, calorie surplus.', '/images/training_plan.png',
+    array['Barbell', 'Dumbbells', 'Cables', 'Machines'], '[]'::jsonb, 'High-protein diet, moderate carbs, calorie surplus.', 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop',
     true, true, (select id from auth.users limit 1)
   ),
   (
@@ -379,7 +379,7 @@ insert into public.training_plans (
     'Get shredded for summer. This program combines heavy compound lifts to maintain muscle with metabolic conditioning to torch fat, optimized for rapid body recomposition.',
     'A high-intensity 60-day fat loss protocol combining lifting and conditioning.',
     39.99, 79.99, 8, 'advanced', 'Lose Fat', 'Conditioning',
-    array['Dumbbells', 'Kettlebells', 'Bodyweight'], '[]'::jsonb, 'Caloric deficit, high-protein intake, low-sugar diet.', '/images/training_plan.png',
+    array['Dumbbells', 'Kettlebells', 'Bodyweight'], '[]'::jsonb, 'Caloric deficit, high-protein intake, low-sugar diet.', 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=800&auto=format&fit=crop',
     true, true, (select id from auth.users limit 1)
   ),
   (
@@ -387,7 +387,7 @@ insert into public.training_plans (
     'Learn proper form for the squat, bench press, and deadlift while building foundational strength that will serve you for a lifetime of lifting. Simple progressive overload cycles.',
     'Perfect for beginners. Master the big three lifts and build a base of raw strength.',
     29.99, null, 6, 'beginner', 'Increase Strength', 'Powerlifting',
-    array['Barbell', 'Squat Rack', 'Bench'], '[]'::jsonb, 'Balanced macro distribution, maintenance calories.', '/images/training_plan.png',
+    array['Barbell', 'Squat Rack', 'Bench'], '[]'::jsonb, 'Balanced macro distribution, maintenance calories.', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop',
     false, true, (select id from auth.users limit 1)
   ),
   (
@@ -395,7 +395,7 @@ insert into public.training_plans (
     'Designed for field and court sport athletes. Focuses on explosive power, plyometrics, directional changes, and high-intensity interval conditioning to expand your active athletic limits.',
     'Unleash your inner athlete. Speed, power, agility, and stamina protocol.',
     44.99, 59.99, 10, 'advanced', 'Athletic Performance', 'Athletics',
-    array['Bands', 'Med Balls', 'Agility Ladder', 'Dumbbells'], '[]'::jsonb, 'High carb for energy replenishment, lean proteins.', '/images/training_plan.png',
+    array['Bands', 'Med Balls', 'Agility Ladder', 'Dumbbells'], '[]'::jsonb, 'High carb for energy replenishment, lean proteins.', 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=800&auto=format&fit=crop',
     true, true, (select id from auth.users limit 1)
   ),
   (
@@ -403,7 +403,7 @@ insert into public.training_plans (
     'A great program to build healthy habits, combine moderate cardiovascular training with basic resistance training, build energy levels, and improve joint health. Perfect for long-term consistency.',
     'Balanced workouts for overall fitness, health, and cardiovascular wellness.',
     19.99, 39.99, 8, 'beginner', 'General Fitness', 'Wellness',
-    array['Dumbbells', 'Bodyweight'], '[]'::jsonb, 'Whole foods based nutrition, plenty of hydration.', '/images/training_plan.png',
+    array['Dumbbells', 'Bodyweight'], '[]'::jsonb, 'Whole foods based nutrition, plenty of hydration.', 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop',
     false, true, (select id from auth.users limit 1)
   );
 
