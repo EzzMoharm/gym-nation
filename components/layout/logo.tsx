@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Dumbbell } from "lucide-react";
 
@@ -9,7 +8,7 @@ interface LogoProps {
 
 export function Logo({ className, iconOnly = false }: LogoProps) {
   return (
-    <Link
+    <a
       href="/"
       className={cn(
         "flex items-center gap-2 font-bold tracking-tight transition-opacity hover:opacity-80",
@@ -25,6 +24,7 @@ export function Logo({ className, iconOnly = false }: LogoProps) {
           GYM<span className="text-brand">NATION</span>
         </span>
       )}
-    </Link>
+    </a>
   );
 }
+
