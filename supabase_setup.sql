@@ -13,15 +13,23 @@ drop function if exists public.handle_new_user() cascade;
 drop function if exists public.is_admin() cascade;
 drop function if exists public.handle_updated_at() cascade;
 
+-- Drop existing types if they exist
+drop type if exists public.user_role cascade;
+drop type if exists public.weight_unit cascade;
+drop type if exists public.plan_difficulty cascade;
+drop type if exists public.subscription_status cascade;
+drop type if exists public.order_status cascade;
+drop type if exists public.discount_type cascade;
+
 -- ============================================
 -- 1. TYPES & ENUMS
 -- ============================================
-create type user_role as enum ('customer', 'admin');
-create type weight_unit as enum ('g', 'kg', 'oz', 'lb');
-create type plan_difficulty as enum ('beginner', 'intermediate', 'advanced', 'elite');
-create type subscription_status as enum ('active', 'paused', 'cancelled', 'expired');
-create type order_status as enum ('pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded');
-create type discount_type as enum ('percentage', 'fixed');
+create type public.user_role as enum ('customer', 'admin');
+create type public.weight_unit as enum ('g', 'kg', 'oz', 'lb');
+create type public.plan_difficulty as enum ('beginner', 'intermediate', 'advanced', 'elite');
+create type public.subscription_status as enum ('active', 'paused', 'cancelled', 'expired');
+create type public.order_status as enum ('pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded');
+create type public.discount_type as enum ('percentage', 'fixed');
 
 -- ============================================
 -- 2. USERS & PROFILES
