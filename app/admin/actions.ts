@@ -454,3 +454,75 @@ export async function updateOrderStatus(orderId: string, status: string) {
   revalidatePath("/dashboard/orders");
   return { error: null };
 }
+
+export async function getAdminDashboardStats() {
+  const supabase = await createClient();
+
+  // Make sure the caller is an admin
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { data: null, error: "Not authenticated" };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!user.email?.startsWith("admin") && profile?.role !== "admin") {
+    return { data: null, error: "Unauthorized" };
+  }
+
+  // 1. Calculate Total Revenue & Sales count from orders
+  const { data: orders, error: ordersErr } = await supabase
+    .from("orders")
+    .select(`
+      id,
+      order_number,
+      total,
+      status,
+      created_at,
+      profile:profiles(email)
+    `);
+
+  if (ordersErr) return { data: null, error: ordersErr.message };
+
+  const totalOrders = orders?.length || 0;
+  const totalRevenue = (orders ?? [])
+    .filter((o) => o.status !== "cancelled" && o.status !== "refunded")
+    .reduce((sum, o) => sum + Number(o.total), 0);
+
+  // 2. Fetch recent 5 orders
+  const recentOrders = (orders ?? [])
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5)
+    .map((o) => ({
+      order_number: o.order_number,
+      email: (Array.isArray(o.profile) ? o.profile[0]?.email : (o.profile as any)?.email) || "guest@example.com",
+      total: Number(o.total),
+    }));
+
+  // 3. Fetch top products ordered by sales_count desc
+  const { data: topProducts, error: prodErr } = await supabase
+    .from("products")
+    .select("id, name, price, sales_count, images:product_images(url)")
+    .order("sales_count", { ascending: false })
+    .limit(4);
+
+  const mappedTopProducts = (topProducts ?? []).map((product: any) => ({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    sales_count: product.sales_count,
+    image_url: product.images?.[0]?.url || "",
+  }));
+
+  return {
+    data: {
+      totalRevenue,
+      totalOrders,
+      recentOrders,
+      topProducts: mappedTopProducts,
+    },
+    error: null,
+  };
+}
