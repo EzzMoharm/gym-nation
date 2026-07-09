@@ -501,10 +501,11 @@ export async function getAdminDashboardStats() {
       total: Number(o.total),
     }));
 
-  // 3. Fetch top products ordered by sales_count desc
+  // 3. Fetch top products ordered by sales_count desc (where sales_count > 0)
   const { data: topProducts, error: prodErr } = await supabase
     .from("products")
     .select("id, name, price, sales_count, images:product_images(url)")
+    .gt("sales_count", 0)
     .order("sales_count", { ascending: false })
     .limit(4);
 
