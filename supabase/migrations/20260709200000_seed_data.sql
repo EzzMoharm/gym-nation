@@ -325,41 +325,41 @@ insert into public.products (
 
 -- 5. Insert Product Images (matching the 30 products)
 insert into public.product_images (product_id, url, alt_text, position, is_primary) values
-  ('a3000000-0000-0000-0000-000000000001', 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=800&auto=format&fit=crop', 'Whey Protein Isolate', 1, true),
-  ('a3000000-0000-0000-0000-000000000002', 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=800&auto=format&fit=crop', 'ISO100 Protein', 1, true),
-  ('a3000000-0000-0000-0000-000000000003', 'https://images.unsplash.com/photo-1543362906-acfc16c67564?q=80&w=800&auto=format&fit=crop', 'Vegan Protein', 1, true),
-  ('a3000000-0000-0000-0000-000000000004', 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?q=80&w=800&auto=format&fit=crop', 'Micellar Casein', 1, true),
-  ('a3000000-0000-0000-0000-000000000005', 'https://images.unsplash.com/photo-1608408821367-6a78b545fcf3?q=80&w=800&auto=format&fit=crop', 'Beef Protein Isolate', 1, true),
-  ('a3000000-0000-0000-0000-000000000006', 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=800&auto=format&fit=crop', 'Whey Plus Blend', 1, true),
+  ('a3000000-0000-0000-0000-000000000001', 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=800&auto=format&fit=crop', '100% Whey Gold Standard Isolate', 1, true),
+  ('a3000000-0000-0000-0000-000000000002', 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=800&auto=format&fit=crop', 'ISO100 Hydrolyzed Whey Protein', 1, true),
+  ('a3000000-0000-0000-0000-000000000003', 'https://images.unsplash.com/photo-1543362906-acfc16c67564?q=80&w=800&auto=format&fit=crop', 'Plant Gold Organic Vegan Protein', 1, true),
+  ('a3000000-0000-0000-0000-000000000004', 'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?q=80&w=800&auto=format&fit=crop', 'Premium Casein Night Support', 1, true),
+  ('a3000000-0000-0000-0000-000000000005', 'https://images.unsplash.com/photo-1608408821367-6a78b545fcf3?q=80&w=800&auto=format&fit=crop', 'Hydrolyzed Beef Protein Isolate', 1, true),
+  ('a3000000-0000-0000-0000-000000000006', 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=800&auto=format&fit=crop', 'Whey Protein Plus Blend', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000007', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'C4 Original', 1, true),
-  ('a3000000-0000-0000-0000-000000000008', 'https://images.unsplash.com/photo-1546483875-ad9014c88eba?q=80&w=800&auto=format&fit=crop', 'C4 Extreme', 1, true),
-  ('a3000000-0000-0000-0000-000000000009', 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop', 'Stim-Free Bulk', 1, true),
-  ('a3000000-0000-0000-0000-000000000010', 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop', 'VaporX Pump', 1, true),
-  ('a3000000-0000-0000-0000-000000000011', 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop', 'GN Ignition Pre', 1, true),
+  ('a3000000-0000-0000-0000-000000000007', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'C4 Original Explosive Energy', 1, true),
+  ('a3000000-0000-0000-0000-000000000008', 'https://images.unsplash.com/photo-1546483875-ad9014c88eba?q=80&w=800&auto=format&fit=crop', 'C4 Extreme High Stimulant', 1, true),
+  ('a3000000-0000-0000-0000-000000000009', 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop', 'Stim-Free Bulk Pre-Workout', 1, true),
+  ('a3000000-0000-0000-0000-000000000010', 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop', 'VaporX Nitric Oxide Pump', 1, true),
+  ('a3000000-0000-0000-0000-000000000011', 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop', 'Gym Nation Ignition Pre-Workout', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000012', 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=800&auto=format&fit=crop', 'Creatine Monohydrate', 1, true),
-  ('a3000000-0000-0000-0000-000000000013', 'https://images.unsplash.com/photo-1611078489935-0cb964de46d6?q=80&w=800&auto=format&fit=crop', 'Creatine HCL', 1, true),
-  ('a3000000-0000-0000-0000-000000000014', 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop', 'Cell-Tech Creatine', 1, true),
-  ('a3000000-0000-0000-0000-000000000015', 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?q=80&w=800&auto=format&fit=crop', 'GN Tri-Creatine', 1, true),
+  ('a3000000-0000-0000-0000-000000000012', 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=800&auto=format&fit=crop', 'Micronized Creatine Monohydrate', 1, true),
+  ('a3000000-0000-0000-0000-000000000013', 'https://images.unsplash.com/photo-1611078489935-0cb964de46d6?q=80&w=800&auto=format&fit=crop', 'Creatine HCL Strength Builder', 1, true),
+  ('a3000000-0000-0000-0000-000000000014', 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=800&auto=format&fit=crop', 'Cell-Tech Creatine Formula', 1, true),
+  ('a3000000-0000-0000-0000-000000000015', 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?q=80&w=800&auto=format&fit=crop', 'Gym Nation Tri-Creatine Blend', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000016', 'https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?q=80&w=800&auto=format&fit=crop', 'Amino Energy', 1, true),
-  ('a3000000-0000-0000-0000-000000000017', 'https://images.unsplash.com/photo-1610970881699-44a5587caaec?q=80&w=800&auto=format&fit=crop', 'EAA Hydration', 1, true),
-  ('a3000000-0000-0000-0000-000000000018', 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=800&auto=format&fit=crop', 'All 9 Amino', 1, true),
-  ('a3000000-0000-0000-0000-000000000019', 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=800&auto=format&fit=crop', 'L-Glutamine Powder', 1, true),
-  ('a3000000-0000-0000-0000-000000000020', 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=800&auto=format&fit=crop', 'GN BCAA Fuel', 1, true),
+  ('a3000000-0000-0000-0000-000000000016', 'https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?q=80&w=800&auto=format&fit=crop', 'Amino Energy Essential BCAAs', 1, true),
+  ('a3000000-0000-0000-0000-000000000017', 'https://images.unsplash.com/photo-1610970881699-44a5587caaec?q=80&w=800&auto=format&fit=crop', 'EAA Hydration Recovery Complex', 1, true),
+  ('a3000000-0000-0000-0000-000000000018', 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=800&auto=format&fit=crop', 'Dymatize All 9 Amino Recovery', 1, true),
+  ('a3000000-0000-0000-0000-000000000019', 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?q=80&w=800&auto=format&fit=crop', 'Pure L-Glutamine Recovery Powder', 1, true),
+  ('a3000000-0000-0000-0000-000000000020', 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=800&auto=format&fit=crop', 'Gym Nation BCAA 2:1:1 Fuel', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000021', 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=800&auto=format&fit=crop', 'Athlete Multivitamin', 1, true),
-  ('a3000000-0000-0000-0000-000000000022', 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?q=80&w=800&auto=format&fit=crop', 'Omega-3 Fish Oil', 1, true),
-  ('a3000000-0000-0000-0000-000000000023', 'https://images.unsplash.com/photo-1550572017-edd951b55104?q=80&w=800&auto=format&fit=crop', 'Joint Shield', 1, true),
-  ('a3000000-0000-0000-0000-000000000024', 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=800&auto=format&fit=crop', 'Sleep & Rest Aid', 1, true),
+  ('a3000000-0000-0000-0000-000000000021', 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=800&auto=format&fit=crop', 'Complete Athlete Multivitamin', 1, true),
+  ('a3000000-0000-0000-0000-000000000022', 'https://images.unsplash.com/photo-1611926653458-09294b3142bf?q=80&w=800&auto=format&fit=crop', 'Ultra-Pure Omega-3 Fish Oil', 1, true),
+  ('a3000000-0000-0000-0000-000000000023', 'https://images.unsplash.com/photo-1550572017-edd951b55104?q=80&w=800&auto=format&fit=crop', 'Joint Shield Support Formula', 1, true),
+  ('a3000000-0000-0000-0000-000000000024', 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?q=80&w=800&auto=format&fit=crop', 'Sleep & Recovery Rest Aid', 1, true),
   
-  ('a3000000-0000-0000-0000-000000000025', 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800&auto=format&fit=crop', 'Weightlifting Belt', 1, true),
-  ('a3000000-0000-0000-0000-000000000026', 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=800&auto=format&fit=crop', 'Barbell Grips', 1, true),
-  ('a3000000-0000-0000-0000-000000000027', 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=800&auto=format&fit=crop', 'Steel Shaker Bottle', 1, true),
-  ('a3000000-0000-0000-0000-000000000028', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'Heavy Wrist Wraps', 1, true),
+  ('a3000000-0000-0000-0000-000000000025', 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800&auto=format&fit=crop', 'Rogue Leather Weightlifting Belt', 1, true),
+  ('a3000000-0000-0000-0000-000000000026', 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=800&auto=format&fit=crop', 'Rogue Ohio Barbell Grips', 1, true),
+  ('a3000000-0000-0000-0000-000000000027', 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?q=80&w=800&auto=format&fit=crop', 'Gym Nation Classic Steel Shaker', 1, true),
+  ('a3000000-0000-0000-0000-000000000028', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'Heavy Duty Wrist Wraps', 1, true),
   ('a3000000-0000-0000-0000-000000000029', 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop', 'Padded Lifting Straps', 1, true),
-  ('a3000000-0000-0000-0000-000000000030', 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop', 'Resistance Bands Set', 1, true);
+  ('a3000000-0000-0000-0000-000000000030', 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop', 'Gym Nation Resistance Bands Set', 1, true);
 
 -- 6. Insert Training Plans (5 Items)
 insert into public.training_plans (
