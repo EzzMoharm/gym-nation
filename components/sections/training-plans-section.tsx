@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/shared/container";
 import { SectionHeader } from "@/components/shared/section-header";
 import {
@@ -44,9 +45,18 @@ export function TrainingPlansSection({ plans }: TrainingPlansSectionProps) {
               >
                 {/* Image area */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-brand/20 to-brand-dark/20">
-                  <div className="flex h-full items-center justify-center">
-                    <Dumbbell className="h-16 w-16 text-brand/30" />
-                  </div>
+                  {plan.image_url ? (
+                    <Image
+                      src={plan.image_url}
+                      alt={plan.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <Dumbbell className="h-16 w-16 text-brand/30" />
+                    </div>
+                  )}
 
                   {/* Difficulty badge */}
                   <Badge
