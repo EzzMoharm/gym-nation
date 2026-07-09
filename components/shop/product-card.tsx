@@ -53,7 +53,7 @@ export function ProductCard({ product }: { product: any }) {
             src={imageUrl}
             alt={product.name}
             fill
-            className="object-contain transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="text-6xl font-black text-muted-foreground/10">GN</div>

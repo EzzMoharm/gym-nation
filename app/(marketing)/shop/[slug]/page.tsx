@@ -48,7 +48,7 @@ export default async function ProductPage({
                   src={product.image_url}
                   alt={product.name}
                   fill
-                  className="object-contain"
+                  className="object-cover"
                   priority
                 />
               ) : (
