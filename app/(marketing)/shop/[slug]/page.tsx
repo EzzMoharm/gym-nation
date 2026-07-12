@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { formatPrice, calcDiscount } from "@/lib/utils";
 import { ShoppingBag, Heart, Shield, Truck, RotateCcw } from "lucide-react";
 import { AddToCartButton } from "./add-to-cart-button";
+import { WishlistButton } from "./wishlist-button";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -117,10 +118,7 @@ export default async function ProductPage({
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <AddToCartButton product={product} />
-              <Button variant="outline" size="lg" className="h-14 rounded-xl px-8 gap-2 shrink-0">
-                <Heart className="h-5 w-5" />
-                Save
-              </Button>
+              <WishlistButton product={product} />
             </div>
 
             {/* Value Props */}

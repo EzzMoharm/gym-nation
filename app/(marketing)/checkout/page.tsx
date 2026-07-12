@@ -130,7 +130,7 @@ export default function CheckoutPage() {
 
       clearCart();
       toast.success("Order placed successfully!");
-      router.push("/checkout/success");
+      router.push(`/checkout/success?order_number=${order.order_number}`);
     } catch (err: any) {
       toast.error("Failed to process checkout: " + err.message);
     } finally {

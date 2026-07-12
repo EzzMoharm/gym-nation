@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Package, CreditCard, Heart, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import { getMyOrders, getMySubscriptions, getMyWishlist } from "@/app/dashboard/actions";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -16,6 +17,11 @@ export default async function DashboardPage() {
 
   if (!user) return null;
 
+  // Fetch actual statistics dynamically from user databases
+  const { data: orders } = await getMyOrders();
+  const { data: subscriptions } = await getMySubscriptions();
+  const { data: wishlist } = await getMyWishlist();
+
   return (
     <div className="space-y-8">
       <div>
@@ -26,7 +32,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {/* Quick Links Cards */}
+        {/* Recent Orders */}
         <Card className="hover:border-brand/50 transition-colors flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -37,14 +43,20 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="flex-1 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground mb-4">
-              You have no recent orders. Time to restock your stack?
+              {orders && orders.length > 0
+                ? `You have placed ${orders.length} order(s).`
+                : "You have no recent orders. Time to restock your stack?"}
             </p>
-            <Link href="/shop" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto" })}>
-              Browse Products
+            <Link
+              href={orders && orders.length > 0 ? "/dashboard/orders" : "/shop"}
+              className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto cursor-pointer" })}
+            >
+              {orders && orders.length > 0 ? "View Orders" : "Browse Products"}
             </Link>
           </CardContent>
         </Card>
 
+        {/* Active Plans */}
         <Card className="hover:border-brand/50 transition-colors flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -55,14 +67,20 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="flex-1 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground mb-4">
-              You don&apos;t have any active training plans yet.
+              {subscriptions && subscriptions.length > 0
+                ? `You are subscribed to ${subscriptions.length} program(s).`
+                : "You don't have any active training plans yet."}
             </p>
-            <Link href="/plans" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto" })}>
-              Find a Plan
+            <Link
+              href={subscriptions && subscriptions.length > 0 ? "/dashboard/subscriptions" : "/plans"}
+              className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto cursor-pointer" })}
+            >
+              {subscriptions && subscriptions.length > 0 ? "Manage Subscriptions" : "Find a Plan"}
             </Link>
           </CardContent>
         </Card>
 
+        {/* Wishlist */}
         <Card className="hover:border-brand/50 transition-colors sm:col-span-2 lg:col-span-1 flex flex-col">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -73,10 +91,15 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent className="flex-1 flex flex-col justify-between">
             <p className="text-sm text-muted-foreground mb-4">
-              Your wishlist is empty.
+              {wishlist && wishlist.length > 0
+                ? `You have ${wishlist.length} item(s) saved.`
+                : "Your wishlist is empty."}
             </p>
-            <Link href="/shop" className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto" })}>
-              Explore
+            <Link
+              href={wishlist && wishlist.length > 0 ? "/dashboard/wishlist" : "/shop"}
+              className={buttonVariants({ variant: "outline", size: "sm", className: "w-full mt-auto cursor-pointer" })}
+            >
+              {wishlist && wishlist.length > 0 ? "View Wishlist" : "Explore"}
             </Link>
           </CardContent>
         </Card>
@@ -100,7 +123,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div className="pt-4 flex justify-end border-t border-border mt-6">
-            <Link href="/dashboard/settings" className={buttonVariants({ variant: "secondary" })}>
+            <Link href="/dashboard/settings" className={buttonVariants({ variant: "secondary", className: "cursor-pointer" })}>
               Edit Profile
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

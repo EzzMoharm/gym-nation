@@ -10,9 +10,9 @@
 
 @theme inline {
   /* --- Fonts --- */
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-inter);
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-heading: "Inter", system-ui, -apple-system, sans-serif;
 
   /* --- shadcn color system --- */
   --color-background: var(--background);
