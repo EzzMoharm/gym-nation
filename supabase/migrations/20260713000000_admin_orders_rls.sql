@@ -28,6 +28,7 @@ USING (
 );
 
 -- Allow admins to read customer profiles when listing orders.
+-- Avoids infinite recursion by utilizing the auth.jwt() helper instead of querying profiles recursively.
 DROP POLICY IF EXISTS "Admins can select all profiles" ON public.profiles;
 CREATE POLICY "Admins can select all profiles"
 ON public.profiles
@@ -35,9 +36,6 @@ FOR SELECT
 TO authenticated
 USING (
   id = auth.uid()
-  OR EXISTS (
-    SELECT 1 FROM public.profiles AS admin_profile
-    WHERE admin_profile.id = auth.uid()
-    AND admin_profile.role = 'admin'
-  )
+  OR (auth.jwt() ->> 'email') LIKE 'admin%'
+  OR (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
 );
