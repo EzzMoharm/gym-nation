@@ -30,7 +30,7 @@ export default function Error({
           Please try again or return to the homepage.
         </p>
         <div className="mt-8 flex gap-3">
-          <Button variant="outline" onClick={reset} className="gap-2">
+          <Button variant="outline" onClick={() => window.location.reload()} className="gap-2 cursor-pointer">
             <RotateCcw className="h-4 w-4" />
             Try Again
           </Button>
