@@ -37,11 +37,8 @@ export function NavLinks({
             ? pathname === "/"
             : pathname.startsWith(link.href);
 
-        const isHome = link.href === "/";
-        const LinkComponent = isHome ? "a" : Link;
-
         return (
-          <LinkComponent
+          <Link
             key={link.href}
             href={link.href}
             onClick={onLinkClick}
@@ -60,7 +57,7 @@ export function NavLinks({
             {isActive && orientation === "vertical" && (
               <span className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-brand" />
             )}
-          </LinkComponent>
+          </Link>
         );
       })}
       

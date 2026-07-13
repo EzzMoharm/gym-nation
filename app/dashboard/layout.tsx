@@ -1,21 +1,7 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Logo } from "@/components/layout/logo";
 import { createClient } from "@/lib/supabase/server";
-import { DASHBOARD_NAV_LINKS } from "@/lib/constants";
-import { LayoutDashboard, Package, Heart, CreditCard, MapPin, Settings, LogOut } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { SignOutButton } from "@/components/auth/sign-out-button";
 import { Container } from "@/components/shared/container";
-
-const iconMap: Record<string, React.ElementType> = {
-  LayoutDashboard,
-  Package,
-  Heart,
-  CreditCard,
-  MapPin,
-  Settings,
-};
+import { DashboardNav } from "@/components/layout/dashboard-nav";
 
 export default async function DashboardLayout({
   children,
@@ -40,40 +26,21 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-dvh flex-col pt-16">
-
       <Container className="flex-1 py-8">
-        <div className="flex flex-col gap-8 md:flex-row md:gap-12">
+        <div className="flex flex-col gap-6 md:flex-row md:gap-12">
           {/* Sidebar */}
-          <aside className="w-full shrink-0 md:w-64">
-            <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10 text-brand font-bold text-lg">
+          <aside className="w-full shrink-0 md:w-64 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10 text-brand font-bold text-lg shrink-0">
                 {profile?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
               </div>
-              <div>
-                <h2 className="font-semibold leading-none mb-1.5">{profile?.full_name || "User"}</h2>
-                <p className="text-xs text-muted-foreground">{user.email}</p>
+              <div className="min-w-0">
+                <h2 className="font-semibold leading-none mb-1.5 truncate">{profile?.full_name || "User"}</h2>
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
               </div>
             </div>
 
-            <nav className="flex flex-col gap-1">
-              {DASHBOARD_NAV_LINKS.map((link) => {
-                const Icon = iconMap[link.icon];
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  >
-                    {Icon && <Icon className="h-4 w-4" />}
-                    {link.label}
-                  </Link>
-                );
-              })}
-              
-              <div className="mt-4 pt-4 border-t border-border/50">
-                <SignOutButton />
-              </div>
-            </nav>
+            <DashboardNav />
           </aside>
 
           {/* Main Content */}
