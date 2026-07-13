@@ -37,13 +37,13 @@ export default function WishlistPage() {
       setIsLoading(true);
       const { data, error } = await supabase
         .from("wishlist")
-        .select("*, product:products(*, images:product_images(url))")
+        .select("*, product:products(*)")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) {
         console.error("Error loading wishlist:", error);
-        toast.error("Failed to load wishlist items");
+        toast.error(`Failed to load wishlist items: ${error.message} (${error.code})`);
       } else if (data) {
         setItems(data as any);
       }
