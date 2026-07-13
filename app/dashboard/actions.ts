@@ -154,14 +154,31 @@ export async function getMyWishlist() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { data: [], error: "Not authenticated" };
 
-  const { data, error } = await supabase
+  const { data: entries, error: entriesError } = await supabase
     .from("wishlist")
-    .select("*, product:products(*)")
+    .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  if (error) return { data: [], error: error.message };
-  return { data: data ?? [], error: null };
+  if (entriesError) return { data: [], error: entriesError.message };
+
+  if (entries && entries.length > 0) {
+    const productIds = entries.map((e) => e.product_id);
+    const { data: products, error: productsError } = await supabase
+      .from("products")
+      .select("*")
+      .in("id", productIds);
+
+    if (productsError) return { data: [], error: productsError.message };
+
+    const mapped = entries.map((entry) => ({
+      ...entry,
+      product: products?.find((p) => p.id === entry.product_id),
+    }));
+    return { data: mapped ?? [], error: null };
+  }
+
+  return { data: [], error: null };
 }
 
 export async function toggleWishlistItem(productId: string) {

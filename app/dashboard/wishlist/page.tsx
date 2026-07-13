@@ -35,17 +35,38 @@ export default function WishlistPage() {
         return;
       }
       setIsLoading(true);
-      const { data, error } = await supabase
+      const { data: entries, error: entriesError } = await supabase
         .from("wishlist")
-        .select("*, product:products(*)")
+        .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("Error loading wishlist:", error);
-        toast.error(`Failed to load wishlist items: ${error.message} (${error.code})`);
-      } else if (data) {
-        setItems(data as any);
+      if (entriesError) {
+        console.error("Error loading wishlist entries:", entriesError);
+        toast.error(`Failed to load wishlist items: ${entriesError.message}`);
+        setIsLoading(false);
+        return;
+      }
+
+      if (entries && entries.length > 0) {
+        const productIds = entries.map((e) => e.product_id);
+        const { data: products, error: productsError } = await supabase
+          .from("products")
+          .select("*")
+          .in("id", productIds);
+
+        if (productsError) {
+          console.error("Error loading products for wishlist:", productsError);
+          toast.error(`Failed to load wishlist products: ${productsError.message}`);
+        } else if (products) {
+          const mapped = entries.map((entry) => ({
+            ...entry,
+            product: products.find((p) => p.id === entry.product_id),
+          }));
+          setItems(mapped as any);
+        }
+      } else {
+        setItems([]);
       }
       setIsLoading(false);
     }
