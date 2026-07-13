@@ -132,7 +132,11 @@ export default function CartPage() {
                         {item.product.name}
                       </Link>
                       <p className="text-xs text-muted-foreground mt-1 capitalize">
-                        {item.product.flavor || item.product.category || "Fitness Supplement"}
+                        {item.product.flavor || 
+                          (typeof item.product.category === "string" 
+                            ? item.product.category 
+                            : item.product.category?.name) || 
+                          "Fitness Supplement"}
                       </p>
                     </div>
                     <button 
