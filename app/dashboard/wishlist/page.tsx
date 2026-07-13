@@ -189,19 +189,18 @@ export default function WishlistPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex border-t border-border">
+                  <div className="flex gap-2 px-4 pb-4">
                     <Button
                       variant="ghost"
-                      className="flex-1 rounded-none h-10 text-xs gap-1.5 hover:bg-brand/5 hover:text-brand cursor-pointer"
+                      className="flex-1 rounded-xl h-9 text-xs gap-1.5 hover:bg-brand/10 hover:text-brand cursor-pointer"
                       onClick={() => handleAddToCart(product)}
                     >
                       <ShoppingCart className="h-3.5 w-3.5" />
                       Add to Cart
                     </Button>
-                    <div className="w-px bg-border" />
                     <Button
                       variant="ghost"
-                      className="flex-1 rounded-none h-10 text-xs gap-1.5 text-destructive hover:bg-destructive/5 hover:text-destructive cursor-pointer"
+                      className="flex-1 rounded-xl h-9 text-xs gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer"
                       onClick={() => handleRemove(entry.product_id)}
                       disabled={removingId === entry.product_id}
                     >
