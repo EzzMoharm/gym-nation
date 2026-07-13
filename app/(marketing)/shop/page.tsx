@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Container } from "@/components/shared/container";
 import { getActiveProducts } from "@/app/admin/actions";
 import { ShopListing } from "@/components/shop/shop-listing";
+import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Shop Supplements & Gear | Gym Nation",
@@ -29,7 +31,14 @@ export default async function ShopPage() {
             <p className="text-muted-foreground text-sm">Check back soon for new additions.</p>
           </div>
         ) : (
-          <ShopListing products={products} />
+          <Suspense fallback={
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-brand" />
+              <p className="text-muted-foreground text-sm mt-4">Loading shop catalog...</p>
+            </div>
+          }>
+            <ShopListing products={products} />
+          </Suspense>
         )}
       </Container>
     </div>

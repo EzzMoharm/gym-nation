@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/shop/product-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,9 @@ interface ShopListingProps {
 }
 
 export function ShopListing({ products }: ShopListingProps) {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   // Filters & Search State
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -30,6 +34,18 @@ export function ShopListing({ products }: ShopListingProps) {
     if (!p.brand) return "";
     return typeof p.brand === "string" ? p.brand : p.brand.name || "";
   };
+
+  useEffect(() => {
+    if (categoryParam) {
+      const cleanParam = categoryParam.toLowerCase().trim();
+      const matched = products.map(getCategoryName).find(
+        (catName) => catName.toLowerCase() === cleanParam
+      );
+      if (matched) {
+        setSelectedCategory(matched);
+      }
+    }
+  }, [categoryParam, products]);
 
   // Dynamically extract unique categories and brands from product list
   const categories = useMemo(() => {
