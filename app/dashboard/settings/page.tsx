@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Camera, User, Phone, Calendar, Dumbbell, AlignLeft, Scale, Ruler, Trash2 } from "lucide-react";
+import { Loader2, Camera, User, Phone, Calendar, Dumbbell, AlignLeft, Scale, Ruler, Trash2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,39 @@ export default function SettingsPage() {
   const [dobDay, setDobDay] = useState<string>("");
   const [dobMonth, setDobMonth] = useState<string>("");
   const [dobYear, setDobYear] = useState<string>("");
+
+  // Password update states
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) throw error;
+      toast.success("Password updated successfully!");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update password");
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
 
   const {
     register,
@@ -296,67 +329,135 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
-        {/* Left Column: Avatar upload */}
-        <Card className="md:col-span-1 h-fit">
-          <CardHeader>
-            <CardTitle>Profile Photo</CardTitle>
-            <CardDescription>
-              Upload a high-quality square picture. Max 10MB.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-6">
-            <div className="relative group">
-              <Avatar className="h-32 w-32 border-2 border-border shadow-inner">
-                <AvatarImage src={avatarUrl || ""} alt="Avatar preview" />
-                <AvatarFallback className="bg-brand/10 text-brand text-3xl font-bold">
-                  {getInitials(userEmail || "U")}
-                </AvatarFallback>
-              </Avatar>
-              
-              {isUploading && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-xs">
-                  <Loader2 className="h-8 w-8 text-brand animate-spin" />
-                </div>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2 w-full">
-              <div className="relative flex items-center justify-center">
-                <Input
-                  id="avatar-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleUploadAvatar}
-                  disabled={isUploading || isLoading}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => document.getElementById("avatar-upload")?.click()}
-                  className="w-full rounded-xl gap-2 cursor-pointer"
-                  disabled={isUploading || isLoading}
-                >
-                  <Camera className="h-4 w-4 text-brand" />
-                  Change Photo
-                </Button>
+        {/* Left Column: Avatar upload & Security */}
+        <div className="md:col-span-1 flex flex-col gap-6">
+          {/* Profile Photo */}
+          <Card className="h-fit">
+            <CardHeader>
+              <CardTitle>Profile Photo</CardTitle>
+              <CardDescription>
+                Upload a high-quality square picture. Max 10MB.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center gap-6">
+              <div className="relative group">
+                <Avatar className="h-32 w-32 border-2 border-border shadow-inner">
+                  <AvatarImage src={avatarUrl || ""} alt="Avatar preview" />
+                  <AvatarFallback className="bg-brand/10 text-brand text-3xl font-bold">
+                    {getInitials(userEmail || "U")}
+                  </AvatarFallback>
+                </Avatar>
+                
+                {isUploading && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-xs">
+                    <Loader2 className="h-8 w-8 text-brand animate-spin" />
+                  </div>
+                )}
               </div>
 
-              {avatarUrl && (
+              <div className="flex flex-col gap-2 w-full">
+                <div className="relative flex items-center justify-center">
+                  <Input
+                    id="avatar-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleUploadAvatar}
+                    disabled={isUploading || isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById("avatar-upload")?.click()}
+                    className="w-full rounded-xl gap-2 cursor-pointer"
+                    disabled={isUploading || isLoading}
+                  >
+                    <Camera className="h-4 w-4 text-brand" />
+                    Change Photo
+                  </Button>
+                </div>
+
+                {avatarUrl && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleRemoveAvatar}
+                    className="w-full rounded-xl gap-2 text-destructive hover:bg-destructive/10"
+                    disabled={isUploading || isLoading}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Remove Photo
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Change Password Card */}
+          <Card className="h-fit">
+            <CardHeader>
+              <CardTitle>Change Password</CardTitle>
+              <CardDescription>
+                Update your account password to keep your profile secure.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleUpdatePassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">New Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="new-password"
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="pr-10 h-11 rounded-xl"
+                      disabled={isLoading || isUpdatingPassword}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded-md hover:bg-muted"
+                    >
+                      {showNewPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-new-password">Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirm-new-password"
+                      type={showNewPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="h-11 rounded-xl"
+                      disabled={isLoading || isUpdatingPassword}
+                    />
+                  </div>
+                </div>
+
                 <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleRemoveAvatar}
-                  className="w-full rounded-xl gap-2 text-destructive hover:bg-destructive/10"
-                  disabled={isUploading || isLoading}
+                  type="submit"
+                  disabled={isLoading || isUpdatingPassword || !newPassword}
+                  className="w-full h-11 rounded-xl bg-brand hover:bg-brand-light text-brand-foreground font-semibold cursor-pointer"
                 >
-                  <Trash2 className="h-4 w-4" />
-                  Remove Photo
+                  {isUpdatingPassword ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : null}
+                  Update Password
                 </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Right Column: Detailed form */}
         <Card className="md:col-span-2">
