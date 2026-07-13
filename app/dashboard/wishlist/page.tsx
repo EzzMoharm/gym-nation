@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
 import { useCartStore } from "@/lib/store/cart";
+import { useAuth } from "@/components/providers/auth-provider";
 import { createClient } from "@/lib/supabase/client";
 import type { Product } from "@/types";
 
@@ -24,33 +25,38 @@ export default function WishlistPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const addToCart = useCartStore((s) => s.addItem);
+  const { user, isLoading: authLoading } = useAuth();
   const supabase = createClient();
 
   useEffect(() => {
     async function loadWishlist() {
-      setIsLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setIsLoading(false);
         return;
       }
+      setIsLoading(true);
       const { data, error } = await supabase
         .from("wishlist")
         .select("*, product:products(*, images:product_images(url))")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (!error && data) {
+      if (error) {
+        console.error("Error loading wishlist:", error);
+        toast.error("Failed to load wishlist items");
+      } else if (data) {
         setItems(data as any);
       }
       setIsLoading(false);
     }
-    loadWishlist();
-  }, [supabase]);
+
+    if (!authLoading) {
+      loadWishlist();
+    }
+  }, [supabase, user, authLoading]);
 
   const handleRemove = async (productId: string) => {
     setRemovingId(productId);
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { error } = await supabase
@@ -73,7 +79,7 @@ export default function WishlistPage() {
     toast.success(`${product.name} added to cart`);
   };
 
-  if (isLoading) {
+  if (isLoading || authLoading) {
     return (
       <div className="space-y-8 max-w-4xl">
         <div>
@@ -115,6 +121,12 @@ export default function WishlistPage() {
             const product = entry.product;
             if (!product) return null;
 
+            // Support both direct image_url column and nested images array
+            const imageUrl =
+              product.image_url ||
+              (product.images && product.images[0]?.url) ||
+              "";
+
             return (
               <Card key={entry.id} className="overflow-hidden hover:border-brand/30 transition-colors">
                 <CardContent className="p-0">
@@ -124,12 +136,12 @@ export default function WishlistPage() {
                       href={`/shop/${product.slug}`}
                       className="relative h-24 w-24 rounded-lg bg-muted border border-border flex items-center justify-center overflow-hidden shrink-0"
                     >
-                      {product.images && product.images[0] ? (
+                      {imageUrl ? (
                         <Image
-                          src={product.images[0].url}
+                          src={imageUrl}
                           alt={product.name}
                           fill
-                          className="object-contain p-1"
+                          className="object-cover p-1"
                         />
                       ) : (
                         <span className="font-bold text-muted-foreground/30 text-lg">GN</span>
@@ -159,7 +171,7 @@ export default function WishlistPage() {
                   <div className="flex border-t border-border">
                     <Button
                       variant="ghost"
-                      className="flex-1 rounded-none h-10 text-xs gap-1.5 hover:bg-brand/5 hover:text-brand"
+                      className="flex-1 rounded-none h-10 text-xs gap-1.5 hover:bg-brand/5 hover:text-brand cursor-pointer"
                       onClick={() => handleAddToCart(product)}
                     >
                       <ShoppingCart className="h-3.5 w-3.5" />
@@ -168,7 +180,7 @@ export default function WishlistPage() {
                     <div className="w-px bg-border" />
                     <Button
                       variant="ghost"
-                      className="flex-1 rounded-none h-10 text-xs gap-1.5 text-destructive hover:bg-destructive/5 hover:text-destructive"
+                      className="flex-1 rounded-none h-10 text-xs gap-1.5 text-destructive hover:bg-destructive/5 hover:text-destructive cursor-pointer"
                       onClick={() => handleRemove(entry.product_id)}
                       disabled={removingId === entry.product_id}
                     >
