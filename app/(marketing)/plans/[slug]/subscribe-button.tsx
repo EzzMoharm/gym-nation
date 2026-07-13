@@ -20,8 +20,30 @@ export function SubscribeButton({ planId, planSlug }: { planId: string; planSlug
       return;
     }
 
-    // Redirect to secure checkout to handle payment process for the training plan
-    router.push(`/checkout?planId=${planId}`);
+    setIsPending(true);
+    try {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      const { data: existing } = await supabase
+        .from("subscriptions")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("plan_id", planId)
+        .eq("status", "active")
+        .maybeSingle();
+
+      if (existing) {
+        toast.warning("You are already actively subscribed to this training plan.");
+        setIsPending(false);
+        return;
+      }
+
+      // Redirect to secure checkout to handle payment process for the training plan
+      router.push(`/checkout?planId=${planId}`);
+    } catch (err: any) {
+      toast.error("Failed to verify subscription status");
+      setIsPending(false);
+    }
   };
 
   return (

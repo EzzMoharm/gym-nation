@@ -76,6 +76,24 @@ function CheckoutContent() {
 
     async function loadPlanData() {
       if (!planId) return;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: existing } = await supabase
+          .from("subscriptions")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("plan_id", planId)
+          .eq("status", "active")
+          .maybeSingle();
+
+        if (existing) {
+          toast.warning("You are already actively subscribed to this training plan.");
+          router.push("/dashboard/subscriptions");
+          return;
+        }
+      }
+
       const { data, error } = await supabase
         .from("training_plans")
         .select("*")
