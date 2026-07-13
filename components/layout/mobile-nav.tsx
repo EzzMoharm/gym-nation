@@ -13,7 +13,7 @@ import { SignOutButton } from "@/components/auth/sign-out-button";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -67,7 +67,7 @@ export function MobileNav() {
             {user ? (
               <div className="pt-2 mt-2 border-t border-border/50 space-y-3">
                 <div className="px-4 py-1 text-xs">
-                  <p className="font-semibold text-foreground truncate">{user.user_metadata?.full_name || "User"}</p>
+                  <p className="font-semibold text-foreground truncate">{profile?.full_name || user.user_metadata?.full_name || "User"}</p>
                   <p className="text-muted-foreground truncate">{user.email}</p>
                 </div>
                 <div onClick={() => setOpen(false)}>

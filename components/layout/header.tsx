@@ -18,7 +18,7 @@ import { CartDrawer } from "@/components/shop/cart-drawer";
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { scrollY } = useScroll();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { loadWishlist } = useWishlistStore();
 
   useEffect(() => {
@@ -90,11 +90,11 @@ export function Header() {
             {user ? (
               <Avatar className="h-7.5 w-7.5 border border-border">
                 <AvatarImage
-                  src={user.user_metadata?.avatar_url}
-                  alt={user.user_metadata?.full_name || "User avatar"}
+                  src={profile?.avatar_url || user.user_metadata?.avatar_url}
+                  alt={profile?.full_name || user.user_metadata?.full_name || "User avatar"}
                 />
                 <AvatarFallback className="bg-brand/10 text-brand text-[10px] font-bold">
-                  {getInitials(user.user_metadata?.full_name || user.email || "")}
+                  {getInitials(profile?.full_name || user.user_metadata?.full_name || user.email || "")}
                 </AvatarFallback>
               </Avatar>
             ) : (

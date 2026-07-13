@@ -10,23 +10,29 @@ import {
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import type { Profile } from "@/types";
 
 interface AuthContextValue {
   user: User | null;
+  profile: Profile | null;
   session: Session | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
+  profile: null,
   session: null,
   isLoading: true,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -38,6 +44,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
   const supabase = hasSupabaseConfig ? createClient() : null;
+
+  const loadProfile = useCallback(async (userId: string) => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+      
+      if (!error && data) {
+        setProfile(data as Profile);
+      } else {
+        setProfile(null);
+      }
+    } catch (err) {
+      console.error("Failed to load profile in AuthProvider:", err);
+      setProfile(null);
+    }
+  }, [supabase]);
+
+  const refreshProfile = useCallback(async () => {
+    if (user) {
+      await loadProfile(user.id);
+    }
+  }, [user, loadProfile]);
 
   useEffect(() => {
     if (!supabase) {
@@ -52,7 +84,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: { session: currentSession },
       } = await supabase.auth.getSession();
       setSession(currentSession);
-      setUser(currentSession?.user ?? null);
+      const currentUser = currentSession?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        await loadProfile(currentUser.id);
+      }
       setIsLoading(false);
     };
 
@@ -61,24 +97,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
       setSession(newSession);
-      setUser(newSession?.user ?? null);
+      const newUser = newSession?.user ?? null;
+      setUser(newUser);
+      if (newUser) {
+        await loadProfile(newUser.id);
+      } else {
+        setProfile(null);
+      }
       setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, [supabase, loadProfile]);
 
   const signOut = useCallback(async () => {
     if (!supabase) return;
     await supabase.auth.signOut();
     setUser(null);
+    setProfile(null);
     setSession(null);
   }, [supabase]);
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, signOut }}>
+    <AuthContext.Provider value={{ user, profile, session, isLoading, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

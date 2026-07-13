@@ -15,6 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/client";
 import { getInitials } from "@/lib/utils";
+import { useAuth } from "@/components/providers/auth-provider";
 
 const profileSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters."),
@@ -56,6 +57,7 @@ export default function SettingsPage() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
   const supabase = createClient();
+  const { refreshProfile } = useAuth();
 
   // Date of birth parts states
   const [dobDay, setDobDay] = useState<string>("");
@@ -240,8 +242,20 @@ export default function SettingsPage() {
         .from("avatars")
         .getPublicUrl(filePath);
 
+      // Save immediately to public.profiles table
+      await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+
+      // Save immediately to auth user metadata
+      await supabase.auth.updateUser({
+        data: { avatar_url: publicUrl }
+      });
+
       setAvatarUrl(publicUrl);
-      setValue("avatarUrl", publicUrl, { shouldDirty: true });
+      setValue("avatarUrl", publicUrl, { shouldDirty: false });
+      await refreshProfile();
       toast.success("Profile photo uploaded successfully!");
     } catch (err: any) {
       toast.error(err.message || "Failed to upload avatar");
@@ -264,8 +278,20 @@ export default function SettingsPage() {
         await supabase.storage.from("avatars").remove([oldPath]);
       }
 
+      // Remove immediately from public.profiles table
+      await supabase
+        .from("profiles")
+        .update({ avatar_url: null })
+        .eq("id", user.id);
+
+      // Remove immediately from auth user metadata
+      await supabase.auth.updateUser({
+        data: { avatar_url: null }
+      });
+
       setAvatarUrl(null);
-      setValue("avatarUrl", null, { shouldDirty: true });
+      setValue("avatarUrl", null, { shouldDirty: false });
+      await refreshProfile();
       toast.success("Profile photo removed");
     } catch (err: any) {
       toast.error(err.message || "Failed to remove photo");
@@ -312,6 +338,7 @@ export default function SettingsPage() {
 
       toast.success("Profile updated successfully");
       reset(data); // reset dirty state
+      await refreshProfile();
     } catch (error: unknown) {
       toast.error((error as Error).message || "Failed to update profile.");
     } finally {
