@@ -4,6 +4,7 @@ import { Dumbbell, Calendar, ArrowRight, Target, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getMySubscriptions } from "@/app/dashboard/actions";
+import { CancelSubscriptionButton } from "../subscriptions/cancel-button";
 
 export const metadata: Metadata = {
   title: "My Training Plans | Dashboard",
@@ -105,7 +106,7 @@ export default async function DashboardPlansPage() {
                     </div>
 
                     {/* CTAs */}
-                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2 items-center w-full">
                       <Link href={`/plans/${plan.slug}`} className="w-full sm:w-auto">
                         <Button className="rounded-xl h-11 w-full sm:w-auto gap-2 bg-brand text-brand-foreground hover:bg-brand-light font-semibold">
                           <Calendar className="h-4 w-4" />
@@ -117,6 +118,7 @@ export default async function DashboardPlansPage() {
                           View Full Details
                         </Button>
                       </Link>
+                      <CancelSubscriptionButton subId={sub.id} />
                     </div>
                   </div>
                 </div>

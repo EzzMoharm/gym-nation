@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getMySubscriptions } from "@/app/dashboard/actions";
 import { formatDateShort } from "@/lib/utils";
+import { CancelSubscriptionButton } from "./cancel-button";
 
 export const metadata: Metadata = {
   title: "Subscriptions | Dashboard",
@@ -96,15 +97,18 @@ export default async function SubscriptionsPage() {
                       </div>
                     </div>
 
-                    {/* View plan link */}
-                    {plan?.slug && (
-                      <Link
-                        href={`/plans/${plan.slug}`}
-                        className={buttonVariants({ variant: "outline", size: "sm", className: "rounded-xl shrink-0" })}
-                      >
-                        View Plan
-                      </Link>
-                    )}
+                    {/* View plan & Cancel action buttons */}
+                    <div className="flex flex-row sm:flex-col items-center sm:items-stretch gap-2 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
+                      {plan?.slug && (
+                        <Link
+                          href={`/plans/${plan.slug}`}
+                          className={buttonVariants({ variant: "outline", size: "sm", className: "rounded-xl w-full text-center" })}
+                        >
+                          View Plan
+                        </Link>
+                      )}
+                      <CancelSubscriptionButton subId={sub.id} />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
