@@ -166,7 +166,7 @@ export async function getMyWishlist() {
     const productIds = entries.map((e) => e.product_id);
     const { data: products, error: productsError } = await supabase
       .from("products")
-      .select("*")
+      .select("*, images:product_images(url)")
       .in("id", productIds);
 
     if (productsError) return { data: [], error: productsError.message };
