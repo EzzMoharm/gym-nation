@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Dumbbell, Calendar, ArrowRight, Target, Clock, ShieldCheck } from "lucide-react";
+import { Dumbbell, Calendar, ArrowRight, Target, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getMySubscriptions } from "@/app/dashboard/actions";

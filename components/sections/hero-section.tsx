@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/shared/container";
 import { ArrowRight, Play, Zap, Shield, Truck } from "lucide-react";
 

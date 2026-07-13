@@ -8,10 +8,7 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/shared/animated-section";
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Star, ShoppingBag, Heart } from "lucide-react";
-import { formatPrice, calcDiscount } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import type { Product } from "@/types";
 
 import { ProductCard } from "@/components/shop/product-card";

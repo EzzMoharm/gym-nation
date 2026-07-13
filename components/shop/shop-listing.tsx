@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useMemo } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ProductCard } from "@/components/shop/product-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,12 @@ interface ShopListingProps {
 
 export function ShopListing({ products }: ShopListingProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const categoryParam = searchParams.get("category");
 
   // Filters & Search State
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState<number>(100);
   const [minPrice, setMinPrice] = useState<number>(0);
@@ -35,17 +36,23 @@ export function ShopListing({ products }: ShopListingProps) {
     return typeof p.brand === "string" ? p.brand : p.brand.name || "";
   };
 
-  useEffect(() => {
-    if (categoryParam) {
-      const cleanParam = categoryParam.toLowerCase().trim();
-      const matched = products.map(getCategoryName).find(
-        (catName) => catName.toLowerCase() === cleanParam
-      );
-      if (matched) {
-        setSelectedCategory(matched);
-      }
-    }
+  const selectedCategory = useMemo(() => {
+    if (!categoryParam) return null;
+    const cleanParam = categoryParam.toLowerCase().trim();
+    return products.map(getCategoryName).find(
+      (catName) => catName.toLowerCase() === cleanParam
+    ) || null;
   }, [categoryParam, products]);
+
+  const handleCategorySelect = (cat: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (cat === "All" || !cat) {
+      params.delete("category");
+    } else {
+      params.set("category", cat.toLowerCase());
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   // Dynamically extract unique categories and brands from product list
   const categories = useMemo(() => {
@@ -68,11 +75,13 @@ export function ShopListing({ products }: ShopListingProps) {
   // Reset all filters
   const resetFilters = () => {
     setSearchQuery("");
-    setSelectedCategory(null);
     setSelectedBrands([]);
     setMinPrice(0);
     setMaxPrice(100);
     setSortBy("featured");
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("category");
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   // Filtered and Sorted products
@@ -168,7 +177,7 @@ export function ShopListing({ products }: ShopListingProps) {
               return (
                 <li
                   key={cat}
-                  onClick={() => setSelectedCategory(cat === "All" ? null : cat)}
+                  onClick={() => handleCategorySelect(cat === "All" ? null : cat)}
                   className={`px-3 py-2 rounded-lg cursor-pointer transition-all ${
                     isActive
                       ? "bg-brand/10 text-brand font-bold border-l-4 border-brand pl-2.5"

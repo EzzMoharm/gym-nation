@@ -10,7 +10,6 @@ import { NavLinks } from "./nav-links";
 import { MobileNav } from "./mobile-nav";
 import { cn, getInitials } from "@/lib/utils";
 import { useAuth } from "@/components/providers/auth-provider";
-import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
