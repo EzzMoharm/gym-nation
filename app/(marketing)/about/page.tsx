@@ -1,5 +1,6 @@
 import { Container } from "@/components/shared/container";
 import { Dumbbell, Target, Shield, Users } from "lucide-react";
+import Image from "next/image";
 
 export const metadata = {
   title: "About Us",
@@ -58,11 +59,16 @@ export default function AboutPage() {
                 We grew tired of the proprietary blends, under-dosed ingredients, and cookie-cutter workout plans that plagued the fitness industry. So we built the platform we always wished existed.
               </p>
             </div>
-            {/* Visual Placeholder */}
-            <div className="relative aspect-square md:aspect-[4/3] lg:aspect-square overflow-hidden rounded-2xl bg-gradient-to-tr from-brand/20 to-brand-dark/30 border border-border/50">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Dumbbell className="h-32 w-32 text-brand/40" />
-              </div>
+            {/* Gym Store Facade Image */}
+            <div className="relative aspect-square md:aspect-[4/3] lg:aspect-square overflow-hidden rounded-2xl border border-border/50 bg-muted">
+              <Image
+                src="/images/gym_store_facade.png"
+                alt="Gym Nation Storefront"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
+              />
             </div>
           </div>
         </Container>
