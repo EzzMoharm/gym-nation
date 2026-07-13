@@ -31,7 +31,7 @@ export function CancelSubscriptionButton({ subId }: { subId: string }) {
   const triggerButton = (
     <Button
       variant="ghost"
-      className="rounded-xl h-11 text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer gap-2 px-3 shrink-0"
+      className="rounded-xl h-11 text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer gap-2 px-3 shrink-0 w-full justify-center sm:w-auto"
     >
       <Trash2 className="h-4 w-4" />
       Remove Plan

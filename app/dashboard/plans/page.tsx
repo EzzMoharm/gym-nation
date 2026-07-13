@@ -106,7 +106,7 @@ export default async function DashboardPlansPage() {
                     </div>
 
                     {/* CTAs */}
-                    <div className="flex flex-col sm:flex-row gap-3 pt-2 items-center w-full">
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2 items-stretch sm:items-center w-full">
                       <Link href={`/plans/${plan.slug}`} className="w-full sm:w-auto">
                         <Button className="rounded-xl h-11 w-full sm:w-auto gap-2 bg-brand text-brand-foreground hover:bg-brand-light font-semibold">
                           <Calendar className="h-4 w-4" />
@@ -114,7 +114,7 @@ export default async function DashboardPlansPage() {
                         </Button>
                       </Link>
                       <Link href={`/plans/${plan.slug}`} className="w-full sm:w-auto">
-                        <Button variant="outline" className="rounded-xl h-11 w-full sm:w-auto border-border">
+                        <Button variant="outline" className="rounded-xl h-11 w-full sm:w-auto border-border w-full">
                           View Full Details
                         </Button>
                       </Link>

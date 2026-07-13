@@ -98,11 +98,11 @@ export default async function SubscriptionsPage() {
                     </div>
 
                     {/* View plan & Cancel action buttons */}
-                    <div className="flex flex-row sm:flex-col items-center sm:items-stretch gap-2 shrink-0 w-full sm:w-auto mt-4 sm:mt-0">
+                    <div className="flex flex-col items-stretch gap-2 shrink-0 w-full sm:w-36 mt-4 sm:mt-0">
                       {plan?.slug && (
                         <Link
                           href={`/plans/${plan.slug}`}
-                          className={buttonVariants({ variant: "outline", size: "sm", className: "rounded-xl w-full text-center" })}
+                          className={buttonVariants({ variant: "outline", size: "sm", className: "rounded-xl w-full text-center h-11 flex items-center justify-center font-medium" })}
                         >
                           View Plan
                         </Link>
