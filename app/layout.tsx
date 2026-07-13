@@ -5,6 +5,7 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { CookieConsent } from "@/components/layout/cookie-consent";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -69,6 +70,7 @@ export default function RootLayout({
               <Header />
               {children}
               <Footer />
+              <CookieConsent />
               <Toaster
                 position="bottom-right"
                 toastOptions={{
