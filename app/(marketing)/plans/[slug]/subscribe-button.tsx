@@ -20,20 +20,8 @@ export function SubscribeButton({ planId, planSlug }: { planId: string; planSlug
       return;
     }
 
-    setIsPending(true);
-    try {
-      const res = await subscribeToPlan(planId);
-      if (res && res.error) {
-        toast.error(res.error);
-      } else {
-        toast.success("Subscribed successfully!");
-        router.push("/dashboard/subscriptions");
-      }
-    } catch (err: any) {
-      toast.error(err.message || "An error occurred during subscription.");
-    } finally {
-      setIsPending(false);
-    }
+    // Redirect to secure checkout to handle payment process for the training plan
+    router.push(`/checkout?planId=${planId}`);
   };
 
   return (

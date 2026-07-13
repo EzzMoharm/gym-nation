@@ -384,14 +384,31 @@ export async function getMySubscriptions() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { data: [], error: "Not authenticated" };
 
-  const { data, error } = await supabase
+  const { data: entries, error: entriesError } = await supabase
     .from("subscriptions")
-    .select("*, plan:training_plans(*)")
+    .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  if (error) return { data: [], error: error.message };
-  return { data: data ?? [], error: null };
+  if (entriesError) return { data: [], error: entriesError.message };
+
+  if (entries && entries.length > 0) {
+    const planIds = entries.map((e) => e.plan_id);
+    const { data: plans, error: plansError } = await supabase
+      .from("training_plans")
+      .select("*")
+      .in("id", planIds);
+
+    if (plansError) return { data: [], error: plansError.message };
+
+    const mapped = entries.map((entry) => ({
+      ...entry,
+      plan: plans?.find((p) => p.id === entry.plan_id),
+    }));
+    return { data: mapped ?? [], error: null };
+  }
+
+  return { data: [], error: null };
 }
 
 export async function subscribeToPlan(planId: string) {

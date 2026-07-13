@@ -1,24 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Container } from "@/components/shared/container";
 import { useCartStore } from "@/lib/store/cart";
 import { formatPrice } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Shield, Lock, CreditCard, Loader2 } from "lucide-react";
+import { CheckCircle2, Shield, Lock, CreditCard, Loader2, Dumbbell } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { createOrder } from "@/app/dashboard/actions";
+import { createOrder, subscribeToPlan } from "@/app/dashboard/actions";
 import { toast } from "sonner";
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const planId = searchParams.get("planId");
+  const isPlanCheckout = !!planId;
+
   const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<any | null>(null);
   const supabase = createClient();
   
   const items = useCartStore((state) => state.items);
@@ -37,6 +42,7 @@ export default function CheckoutPage() {
   const [country, setCountry] = useState("US");
   const [phone, setPhone] = useState("");
 
+  // Load user default addresses & load plan info if it is a plan checkout
   useEffect(() => {
     setIsMounted(true);
 
@@ -68,26 +74,51 @@ export default function CheckoutPage() {
       }
     }
 
+    async function loadPlanData() {
+      if (!planId) return;
+      const { data, error } = await supabase
+        .from("training_plans")
+        .select("*")
+        .eq("id", planId)
+        .single();
+      
+      if (!error && data) {
+        setSelectedPlan(data);
+      } else {
+        toast.error("Failed to load training plan details");
+      }
+    }
+
     loadUserData();
-  }, [supabase]);
+    if (isPlanCheckout) {
+      loadPlanData();
+    }
+  }, [supabase, planId, isPlanCheckout]);
 
   if (!isMounted) return null;
 
-  if (items.length === 0) {
+  const isEmpty = isPlanCheckout ? !selectedPlan : items.length === 0;
+
+  if (isEmpty) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
-        <p className="text-muted-foreground mb-8">Add some products to proceed to checkout.</p>
-        <Link href="/shop" className={buttonVariants({ className: "rounded-xl" })}>
-          Browse Products
+        <h1 className="text-2xl font-bold mb-4">
+          {isPlanCheckout ? "Loading Subscription details..." : "Your cart is empty"}
+        </h1>
+        <p className="text-muted-foreground mb-8">
+          {isPlanCheckout ? "Retrieving plan security info." : "Add some products to proceed to checkout."}
+        </p>
+        <Link href={isPlanCheckout ? "/plans" : "/shop"} className={buttonVariants({ className: "rounded-xl" })}>
+          {isPlanCheckout ? "Browse Plans" : "Browse Products"}
         </Link>
       </div>
     );
   }
 
-  const shipping = subtotal > 75 ? 0 : 9.99;
-  const taxes = subtotal * 0.08; // 8% mock tax
-  const total = subtotal + shipping + taxes;
+  const currentSubtotal = isPlanCheckout ? (selectedPlan?.price || 0) : subtotal;
+  const shipping = isPlanCheckout ? 0 : (currentSubtotal > 75 ? 0 : 9.99);
+  const taxes = currentSubtotal * 0.08; // 8% mock tax
+  const total = currentSubtotal + shipping + taxes;
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,11 +127,23 @@ export default function CheckoutPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.error("Please sign in to place an order");
-        router.push("/login?redirect=/checkout");
+        toast.error("Please sign in to complete checkout");
+        router.push(`/login?redirect=${window.location.pathname}${window.location.search}`);
         return;
       }
 
+      if (isPlanCheckout) {
+        // Process subscription checkout
+        const res = await subscribeToPlan(planId!);
+        if (res && res.error) {
+          throw new Error(res.error);
+        }
+        toast.success("Subscription activated successfully!");
+        router.push("/dashboard/subscriptions");
+        return;
+      }
+
+      // Process standard cart order checkout
       const orderData = {
         items: items.map((item) => ({
           product_id: item.product.id,
@@ -171,9 +214,11 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
-              {/* Shipping */}
+              {/* Shipping / Address */}
               <section className="bg-card p-6 rounded-2xl border border-border">
-                <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
+                <h2 className="text-xl font-semibold mb-4">
+                  {isPlanCheckout ? "Billing Address" : "Shipping Address"}
+                </h2>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2 col-span-2 sm:col-span-1">
                     <Label htmlFor="firstName">First name</Label>
@@ -299,7 +344,7 @@ export default function CheckoutPage() {
               <Button 
                 type="submit" 
                 size="lg" 
-                className="w-full h-14 rounded-xl text-lg font-bold bg-brand hover:bg-brand-light text-brand-foreground"
+                className="w-full h-14 rounded-xl text-lg font-bold bg-brand hover:bg-brand-light text-brand-foreground cursor-pointer"
                 disabled={isProcessing}
               >
                 {isProcessing ? (
@@ -318,37 +363,52 @@ export default function CheckoutPage() {
               <h2 className="text-lg font-semibold mb-6">Order Summary</h2>
               
               <div className="space-y-4 mb-6">
-                {items.map((item) => (
-                  <div key={item.product.id} className="flex gap-4">
-                    <div className="relative h-16 w-16 bg-muted rounded-lg border border-border flex items-center justify-center overflow-hidden shrink-0">
-                      {item.product.images && item.product.images[0] ? (
-                        <Image
-                          src={item.product.images[0].url}
-                          alt={item.product.name}
-                          fill
-                          className="object-contain p-1"
-                        />
-                      ) : (
-                        <span className="font-bold text-muted-foreground/20 text-xs">GN</span>
-                      )}
-                      <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-brand-foreground z-10">
-                        {item.quantity}
-                      </span>
+                {isPlanCheckout && selectedPlan ? (
+                  <div className="flex gap-4">
+                    <div className="relative h-16 w-16 bg-brand/10 rounded-lg border border-border flex items-center justify-center overflow-hidden shrink-0">
+                      <Dumbbell className="h-8 w-8 text-brand" />
                     </div>
                     <div className="flex flex-1 flex-col justify-center">
-                      <p className="text-sm font-medium line-clamp-2">{item.product.name}</p>
+                      <p className="text-sm font-semibold line-clamp-2">{selectedPlan.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{selectedPlan.duration_weeks} Weeks Subscription</p>
                     </div>
-                    <div className="flex flex-col justify-center text-sm font-medium">
-                      {formatPrice(item.product.price * item.quantity)}
+                    <div className="flex flex-col justify-center text-sm font-semibold">
+                      {formatPrice(selectedPlan.price)}
                     </div>
                   </div>
-                ))}
+                ) : (
+                  items.map((item) => (
+                    <div key={item.product.id} className="flex gap-4">
+                      <div className="relative h-16 w-16 bg-muted rounded-lg border border-border flex items-center justify-center overflow-hidden shrink-0">
+                        {item.product.images && item.product.images[0] ? (
+                          <Image
+                            src={item.product.images[0].url}
+                            alt={item.product.name}
+                            fill
+                            className="object-contain p-1"
+                          />
+                        ) : (
+                          <span className="font-bold text-muted-foreground/20 text-xs">GN</span>
+                        )}
+                        <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-brand-foreground z-10">
+                          {item.quantity}
+                        </span>
+                      </div>
+                      <div className="flex flex-1 flex-col justify-center">
+                        <p className="text-sm font-medium line-clamp-2">{item.product.name}</p>
+                      </div>
+                      <div className="flex flex-col justify-center text-sm font-medium">
+                        {formatPrice(item.product.price * item.quantity)}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
               <div className="space-y-3 border-t border-border pt-6 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">{formatPrice(subtotal)}</span>
+                  <span className="font-medium">{formatPrice(currentSubtotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
@@ -369,5 +429,17 @@ export default function CheckoutPage() {
         </div>
       </Container>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-brand" />
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }
