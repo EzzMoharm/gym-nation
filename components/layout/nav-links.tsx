@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "@/lib/constants";
 import { useAuth } from "@/components/providers/auth-provider";
+import { isAdminEmail } from "@/lib/admin-auth";
 
 interface NavLinksProps {
   className?: string;
@@ -20,7 +21,7 @@ export function NavLinks({
   const pathname = usePathname();
   const { user } = useAuth();
   
-  const isAdmin = user?.email?.startsWith("admin");
+  const isAdmin = isAdminEmail(user?.email);
 
   return (
     <nav

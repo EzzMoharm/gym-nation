@@ -99,8 +99,11 @@ Create a `.env.local` file in the root folder:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 RESEND_API_KEY=your_resend_email_api_key_optional
 ```
+
+For admin order management, either add `SUPABASE_SERVICE_ROLE_KEY` (server-only, from Supabase Project Settings → API) **or** run the SQL migration in `supabase/migrations/20260713000000_admin_orders_rls.sql` in the Supabase SQL editor.
 
 ### 4. Run Development Server
 ```bash

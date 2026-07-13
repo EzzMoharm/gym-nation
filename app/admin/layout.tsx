@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { AdminNav } from "@/components/layout/admin-nav";
+import { isAdminUser } from "@/lib/admin-auth";
 
 export default async function AdminLayout({
   children,
@@ -24,7 +25,17 @@ export default async function AdminLayout({
     .eq("id", user.id)
     .single();
 
-  if (!user.email?.startsWith("admin") && profile?.role !== "admin") {
+  const isEmailAdmin = user.email?.toLowerCase().startsWith("admin");
+
+  if (isEmailAdmin && profile?.role !== "admin") {
+    // Automatically elevate role in the DB to allow RLS policies to pass
+    await supabase
+      .from("profiles")
+      .update({ role: "admin" })
+      .eq("id", user.id);
+  }
+
+  if (!isEmailAdmin && profile?.role !== "admin") {
     redirect("/");
   }
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedAdminClient } from "@/lib/supabase/admin";
 
 // ============================================
 // Image Upload
@@ -399,23 +400,10 @@ export async function deletePlan(id: string) {
 }
 
 export async function getAllAdminOrders() {
-  const supabase = await createClient();
-  
-  // Make sure the caller is an admin
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { data: [], error: "Not authenticated" };
+  const { client, error: authError } = await getAuthenticatedAdminClient();
+  if (authError || !client) return { data: [], error: authError ?? "Unauthorized" };
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!user.email?.startsWith("admin") && profile?.role !== "admin") {
-    return { data: [], error: "Unauthorized" };
-  }
-
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("orders")
     .select(`
       *,
@@ -428,22 +416,10 @@ export async function getAllAdminOrders() {
 }
 
 export async function updateOrderStatus(orderId: string, status: string) {
-  const supabase = await createClient();
+  const { client, error: authError } = await getAuthenticatedAdminClient();
+  if (authError || !client) return { error: authError ?? "Unauthorized" };
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Not authenticated" };
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!user.email?.startsWith("admin") && profile?.role !== "admin") {
-    return { error: "Unauthorized" };
-  }
-
-  const { error } = await supabase
+  const { error } = await client
     .from("orders")
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", orderId);
@@ -456,24 +432,11 @@ export async function updateOrderStatus(orderId: string, status: string) {
 }
 
 export async function getAdminDashboardStats() {
-  const supabase = await createClient();
-
-  // Make sure the caller is an admin
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { data: null, error: "Not authenticated" };
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!user.email?.startsWith("admin") && profile?.role !== "admin") {
-    return { data: null, error: "Unauthorized" };
-  }
+  const { client, error: authError } = await getAuthenticatedAdminClient();
+  if (authError || !client) return { data: null, error: authError ?? "Unauthorized" };
 
   // 1. Calculate Total Revenue & Sales count from orders
-  const { data: orders, error: ordersErr } = await supabase
+  const { data: orders, error: ordersErr } = await client
     .from("orders")
     .select(`
       id,
@@ -502,7 +465,7 @@ export async function getAdminDashboardStats() {
     }));
 
   // 3. Fetch top products ordered by sales_count desc (where sales_count > 0)
-  const { data: topProducts, error: prodErr } = await supabase
+  const { data: topProducts } = await client
     .from("products")
     .select("id, name, price, sales_count, images:product_images(url)")
     .gt("sales_count", 0)
