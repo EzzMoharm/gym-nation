@@ -31,7 +31,7 @@ function CheckoutSuccessContent() {
       </p>
 
       <div className="space-y-4">
-        <Link href="/dashboard" className={buttonVariants({ size: "lg", className: "w-full h-14 rounded-xl bg-brand hover:bg-brand-light text-brand-foreground font-bold" })}>
+        <Link href="/dashboard/orders" className={buttonVariants({ size: "lg", className: "w-full h-14 rounded-xl bg-brand hover:bg-brand-light text-brand-foreground font-bold" })}>
           View Order Status
           <ArrowRight className="ml-2 h-5 w-5" />
         </Link>

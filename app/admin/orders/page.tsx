@@ -6,6 +6,7 @@ import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getAllAdminOrders, updateOrderStatus } from "@/app/admin/actions";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
 
 interface AdminOrder {
   id: string;
@@ -47,7 +48,40 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     loadOrders();
+
+    const supabase = createClient();
+    const channel = supabase
+      .channel("admin-orders-list-realtime")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "orders" },
+        () => {
+          silentRefreshOrders();
+        }
+      )
+      .subscribe();
+
+    // Fallback: poll for new orders every 12 seconds
+    const interval = setInterval(() => {
+      silentRefreshOrders();
+    }, 12000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(interval);
+    };
   }, []);
+
+  async function silentRefreshOrders() {
+    try {
+      const res = await getAllAdminOrders();
+      if (!res.error && res.data) {
+        setOrders(res.data as any || []);
+      }
+    } catch (err) {
+      console.error("Failed to silently refresh orders:", err);
+    }
+  }
 
   async function loadOrders() {
     setIsLoading(true);

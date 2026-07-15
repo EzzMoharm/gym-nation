@@ -110,8 +110,49 @@ export function OrdersListClient({ initialOrders }: OrdersListClientProps) {
       )
       .subscribe();
 
+    // Fallback: poll for order updates every 15 seconds in case real-time fails/is disabled
+    const interval = setInterval(async () => {
+      try {
+        const { data, error } = await supabase
+          .from("orders")
+          .select("*, order_items(*)")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+          
+        if (!error && data) {
+          setOrders((prev) => {
+            // Check status differences to trigger toasts
+            data.forEach((newOrder) => {
+              const oldOrder = prev.find((o) => o.id === newOrder.id);
+              if (
+                oldOrder &&
+                oldOrder.status !== "delivered" &&
+                newOrder.status === "delivered"
+              ) {
+                toast.success(`🎉 Great news! Order ${newOrder.order_number} has been delivered!`, {
+                  duration: 10000,
+                });
+              } else if (
+                oldOrder &&
+                oldOrder.status !== newOrder.status
+              ) {
+                const statusName = statusConfig[newOrder.status]?.label || newOrder.status;
+                toast.info(`📦 Order ${newOrder.order_number} status updated to: ${statusName}`, {
+                  duration: 6000,
+                });
+              }
+            });
+            return data;
+          });
+        }
+      } catch (err) {
+        console.error("Failed to poll customer orders:", err);
+      }
+    }, 15000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, [user]);
 

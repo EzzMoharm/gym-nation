@@ -12,12 +12,12 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 
 interface OrderNotification {
   id: string;
@@ -72,6 +72,7 @@ function playChime() {
 
 export function AdminNotificationsBell() {
   const { profile } = useAuth();
+  const router = useRouter();
   const [notifications, setNotifications] = useState<OrderNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [ringBell, setRingBell] = useState(false);
@@ -135,8 +136,28 @@ export function AdminNotificationsBell() {
       )
       .subscribe();
 
+    // Fallback: poll for new orders every 15 seconds in case real-time fails/is disabled
+    const interval = setInterval(async () => {
+      try {
+        const res = await getAllAdminOrders();
+        if (!res.error && res.data) {
+          const fetchedOrders = res.data as any[];
+          const lastChecked = localStorage.getItem("admin_last_checked_orders");
+          const lastCheckedTime = lastChecked ? new Date(lastChecked).getTime() : 0;
+          const unread = fetchedOrders.filter(
+            (o) => new Date(o.created_at).getTime() > lastCheckedTime
+          ).length;
+          setNotifications(fetchedOrders.slice(0, 5));
+          setUnreadCount(unread);
+        }
+      } catch (err) {
+        console.error("Failed to poll admin notifications:", err);
+      }
+    }, 15000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, [profile]);
 
@@ -185,9 +206,9 @@ export function AdminNotificationsBell() {
       
       <DropdownMenuContent className="w-80 p-2 rounded-2xl bg-card border border-border shadow-xl align-end z-50">
         <div className="flex items-center justify-between px-2 py-1.5">
-          <DropdownMenuLabel className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
+          <span className="px-1.5 py-1 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Notifications
-          </DropdownMenuLabel>
+          </span>
           {unreadCount > 0 && (
             <button
               onClick={clearNotifications}
@@ -209,9 +230,11 @@ export function AdminNotificationsBell() {
             </div>
           ) : (
             notifications.map((notif) => (
-              <DropdownMenuItem key={notif.id} className="p-2 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer" render={
-                <Link href="/admin/orders" />
-              }>
+              <DropdownMenuItem 
+                key={notif.id} 
+                className="p-2 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() => router.push("/admin/orders")}
+              >
                 <div className="flex flex-col w-full gap-1">
                   <div className="flex justify-between w-full text-xs">
                     <span className="font-bold font-mono text-foreground">{notif.order_number}</span>
@@ -232,11 +255,14 @@ export function AdminNotificationsBell() {
         
         <DropdownMenuSeparator />
         <div className="p-1">
-          <Link href="/admin/orders" className="w-full block">
+          <DropdownMenuItem 
+            className="p-0 rounded-xl cursor-pointer"
+            onClick={() => router.push("/admin/orders")}
+          >
             <Button variant="outline" className="w-full text-xs h-9 rounded-xl font-semibold">
               View All Orders
             </Button>
-          </Link>
+          </DropdownMenuItem>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
