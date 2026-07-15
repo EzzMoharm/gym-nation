@@ -20,6 +20,7 @@ Gym Nation is a premium, high-performance E-Commerce Supplement Store and Expert
 * **Interactive Catalog**: Live client-side product search, category tab filtering, brand toggle checkboxes, and a dual-control price range slider.
 * **Premium Details View**: Fluid layout displaying supplement highlights (ingredients, servings, flavor variations, and suggested use) with image scaling transitions.
 * **Wishlist Syncing**: Single-click toggling to save items to a client wishlist, dynamically updating the global header counter.
+* **Cart Authentication Gating**: Blocks adding items to the cart or viewing the cart (via drawer or page) unless signed in. Redirects users to the login page and brings them back to their previous page upon successful authentication. Automatically purges cart state on logout.
 
 ### 🏋️ Training Plans Portal
 * **Program Directory**: Category lists to filter elite strength, hypertrophy, fat loss, or conditioning routines.
@@ -27,12 +28,13 @@ Gym Nation is a premium, high-performance E-Commerce Supplement Store and Expert
 
 ### 💳 Cart & Checkout Pipeline
 * **Shopping Cart Page**: Full-screen cart view displaying order items, quantity controls, automatic tax estimation (8%), and a **Free Shipping Tracker** (visual progress bar toward the $75 threshold).
-* **Checkout Screen**: Secure address auto-fill details, mock payment input fields, and real-time database orders validation.
-* **Confirmation Page**: Dynamic orders success screen showing the unique generated receipt numbers (`GN-XXXX`).
+* **Checkout Screen**: Secure address auto-fill details, fully available and interactive card payment inputs (card number, expiration, CVC) with automatic formatting filters and form validation.
+* **Confirmation Page**: Dynamic orders success screen showing the unique generated receipt numbers (`GN-XXXX`) and routing directly to the order tracking portal.
 
 ### 📊 Dashboard & Accounts Hub
-* **User Dashboard**: Overview of orders history, subscription progress gauges, active wishlist items, and personal settings (bio, weight, height, profile photo upload, and fitness targets).
-* **Admin Terminal**: Real-time sales metrics (Total Revenue, Order Volumes, Top Selling Products), product listings CRUD portal, training plans CRUD builder, and order status updates.
+* **User Dashboard & Live Tracking**: Overview of orders history, subscription progress gauges, active wishlist items, and personal settings (bio, weight, height, profile photo upload, and fitness targets). Features an **animated horizontal stepper** tracking order milestones (`Placed` -> `Processing` -> `Shipped` -> `Delivered`) updating in real-time when the status is modified.
+* **Admin Terminal & Notifications**: Real-time sales metrics (Total Revenue, Order Volumes, Top Selling Products), product CRUD portal, training plans CRUD builder, and order status updates. Includes a **real-time header notification bell** that plays a custom Web Audio API chime sound, triggers success toasts, and lists recent orders on new checkouts.
+* **Database Resilience Fallbacks**: Supports automatic, silent 12-15 second polling backups for all real-time order lists and notifications to guarantee updates even if database-level real-time replication is unavailable.
 
 ### 🛡️ Compliance & Support
 * **GDPR Cookie Consent**: Sleek slide-in consent dialog that writes real browser cookies (`gym_nation_cookie_consent=accepted`) to remember client preferences for 365 days.
