@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,6 +23,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const supabase = createClient();
@@ -56,7 +57,8 @@ export function LoginForm() {
       if (data.email.toLowerCase().startsWith("admin")) {
         router.push("/admin");
       } else {
-        router.push("/dashboard");
+        const redirectUrl = searchParams.get("redirect") || "/dashboard";
+        router.push(redirectUrl);
       }
       router.refresh(); // Force refresh to update server components with new session
     } catch (error: unknown) {

@@ -8,6 +8,7 @@ import { useCartStore } from "@/lib/store/cart";
 import { formatPrice } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ShoppingBag, Plus, Minus, Trash2, ArrowRight, ShieldCheck, Truck } from "lucide-react";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export default function CartPage() {
   const [isMounted, setIsMounted] = useState(false);
@@ -15,6 +16,7 @@ export default function CartPage() {
   const subtotal = useCartStore((state) => state.subtotal);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const removeItem = useCartStore((state) => state.removeItem);
+  const { user } = useAuth();
 
   useEffect(() => {
     setIsMounted(true);
@@ -27,6 +29,25 @@ export default function CartPage() {
           <div className="h-12 w-12 bg-muted rounded-full mx-auto" />
           <div className="h-4 w-48 bg-muted rounded mx-auto" />
         </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-[75vh] pt-28 pb-12 flex items-center justify-center bg-muted/10">
+        <Container className="max-w-md text-center space-y-6">
+          <div className="mx-auto h-24 w-24 bg-card rounded-full flex items-center justify-center border border-border shadow-xs">
+            <ShoppingBag className="h-10 w-10 text-muted-foreground/60" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Your Cart</h1>
+          <p className="text-muted-foreground">
+            Please sign in to view your shopping cart and make purchases.
+          </p>
+          <Link href="/login?redirect=/cart" className={buttonVariants({ size: "lg", className: "w-full rounded-xl bg-brand hover:bg-brand-light text-brand-foreground font-bold h-12" })}>
+            Sign In
+          </Link>
+        </Container>
       </div>
     );
   }

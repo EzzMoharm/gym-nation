@@ -11,6 +11,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import type { Profile } from "@/types";
+import { useCartStore } from "@/lib/store/cart";
 
 interface AuthContextValue {
   user: User | null;
@@ -105,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await loadProfile(newUser.id);
       } else {
         setProfile(null);
+        useCartStore.getState().clearCart();
       }
       setIsLoading(false);
     });
@@ -118,6 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setProfile(null);
     setSession(null);
+    useCartStore.getState().clearCart();
   }, [supabase]);
 
   return (

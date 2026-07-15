@@ -8,12 +8,16 @@ import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useAuth } from "@/components/providers/auth-provider";
+import { useRouter } from "next/navigation";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function ProductCard({ product }: { product: any }) {
   const addItem = useCartStore((state) => state.addItem);
   const { wishlistIds, toggleWishlist } = useWishlistStore();
   const isWishlisted = wishlistIds.includes(product.id);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const discount = product.compare_at_price
     ? calcDiscount(product.compare_at_price, product.price)
@@ -37,6 +41,11 @@ export function ProductCard({ product }: { product: any }) {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("Please login to add items to cart");
+      router.push(`/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
     addItem(product);
     toast.success(`${product.name} added to cart`);
   };

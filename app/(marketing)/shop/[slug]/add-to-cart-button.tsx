@@ -6,12 +6,21 @@ import { ShoppingBag, Minus, Plus } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import type { Product } from "@/types";
 import { toast } from "sonner";
+import { useAuth } from "@/components/providers/auth-provider";
+import { useRouter } from "next/navigation";
 
 export function AddToCartButton({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const addItem = useCartStore((state) => state.addItem);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const handleAdd = () => {
+    if (!user) {
+      toast.error("Please login to add items to cart");
+      router.push(`/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
     addItem(product, quantity);
     toast.success(`${quantity} x ${product.name} added to cart`);
   };

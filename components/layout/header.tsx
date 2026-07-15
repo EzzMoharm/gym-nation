@@ -14,6 +14,7 @@ import { useWishlistStore } from "@/lib/store/wishlist";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { CartDrawer } from "@/components/shop/cart-drawer";
+import { AdminNotificationsBell } from "@/components/admin/admin-notifications-bell";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -77,6 +78,9 @@ export function Header() {
 
           {/* Cart */}
           <CartDrawer />
+
+          {/* Admin Notifications */}
+          <AdminNotificationsBell />
 
           {/* Account */}
           <Link

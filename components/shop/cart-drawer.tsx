@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useCartStore } from "@/lib/store/cart";
 import { formatPrice } from "@/lib/utils";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export function CartDrawer() {
   const [isMounted, setIsMounted] = useState(false);
@@ -18,6 +19,9 @@ export function CartDrawer() {
   const subtotal = useCartStore((state) => state.subtotal);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const removeItem = useCartStore((state) => state.removeItem);
+  const { user } = useAuth();
+  
+  const displayTotalItems = user ? totalItems : 0;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -35,12 +39,12 @@ export function CartDrawer() {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger render={
-        <Button variant="ghost" size="icon" className="relative" aria-label={`Shopping cart, ${totalItems} items`} />
+        <Button variant="ghost" size="icon" className="relative" aria-label={user ? `Shopping cart, ${displayTotalItems} items` : "Shopping cart"} />
       }>
         <ShoppingBag className="h-4.5 w-4.5" />
-        {totalItems > 0 && (
+        {displayTotalItems > 0 && (
           <span className="absolute -top-0.5 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-brand-foreground">
-            {totalItems}
+            {displayTotalItems}
           </span>
         )}
       </SheetTrigger>
@@ -49,12 +53,29 @@ export function CartDrawer() {
         <SheetHeader className="p-6 border-b border-border">
           <SheetTitle className="flex items-center gap-2 text-xl font-bold">
             <ShoppingBag className="h-5 w-5 text-brand" />
-            Your Cart ({totalItems})
+            Your Cart ({displayTotalItems})
           </SheetTitle>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {items.length === 0 ? (
+          {!user ? (
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+              <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center mb-4">
+                <ShoppingBag className="h-10 w-10 text-muted-foreground/50" />
+              </div>
+              <h3 className="text-xl font-semibold tracking-tight">Access your cart</h3>
+              <p className="text-sm text-muted-foreground max-w-xs">
+                Please sign in to view your shopping cart and manage your items.
+              </p>
+              <Link
+                href={`/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`}
+                className={buttonVariants({ className: "mt-4 rounded-xl" })}
+                onClick={() => setIsOpen(false)}
+              >
+                Sign In
+              </Link>
+            </div>
+          ) : items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
               <div className="h-20 w-20 bg-muted rounded-full flex items-center justify-center mb-4">
                 <ShoppingBag className="h-10 w-10 text-muted-foreground/50" />
@@ -123,7 +144,7 @@ export function CartDrawer() {
           )}
         </div>
 
-        {items.length > 0 && (
+        {user && items.length > 0 && (
           <div className="border-t border-border p-6 bg-muted/20">
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-sm">
