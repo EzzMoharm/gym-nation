@@ -41,6 +41,11 @@ function CheckoutContent() {
   const [postalCode, setPostalCode] = useState("");
   const [country, setCountry] = useState("US");
   const [phone, setPhone] = useState("");
+  
+  // Card payment states
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
 
   // Load user default addresses & load plan info if it is a plan checkout
   useEffect(() => {
@@ -142,6 +147,12 @@ function CheckoutContent() {
     e.preventDefault();
     setIsProcessing(true);
     
+    if (!cardNumber || !cardExpiry || !cardCvc) {
+      toast.error("Please enter your payment card details to complete checkout");
+      setIsProcessing(false);
+      return;
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -330,30 +341,61 @@ function CheckoutContent() {
                 </div>
               </section>
 
-              {/* Payment Mock */}
+              {/* Payment Details */}
               <section className="bg-card p-6 rounded-2xl border border-border">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-semibold">Payment Details</h2>
                   <CreditCard className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <div className="rounded-xl border border-border p-4 bg-muted/30 mb-6">
-                  <p className="text-sm text-center text-muted-foreground">
-                    This is a demo store. No real payment will be processed.
-                  </p>
-                </div>
-                <div className="space-y-4 opacity-50 pointer-events-none">
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Card number</Label>
-                    <Input value="•••• •••• •••• 4242" readOnly className="h-11 rounded-xl" />
+                    <Label htmlFor="cardNumber">Card number</Label>
+                    <Input 
+                      id="cardNumber" 
+                      placeholder="4242 4242 4242 4242" 
+                      required 
+                      className="h-11 rounded-xl"
+                      value={cardNumber}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        const matches = val.match(/\d{1,4}/g);
+                        setCardNumber(matches ? matches.join(" ") : val);
+                      }}
+                      maxLength={19}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Expiration date</Label>
-                      <Input value="12/25" readOnly className="h-11 rounded-xl" />
+                      <Label htmlFor="cardExpiry">Expiration date</Label>
+                      <Input 
+                        id="cardExpiry" 
+                        placeholder="MM/YY" 
+                        required 
+                        className="h-11 rounded-xl"
+                        value={cardExpiry}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          if (val.length >= 3) {
+                            setCardExpiry(`${val.slice(0, 2)}/${val.slice(2, 4)}`);
+                          } else {
+                            setCardExpiry(val);
+                          }
+                        }}
+                        maxLength={5}
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label>Security code</Label>
-                      <Input value="123" readOnly className="h-11 rounded-xl" />
+                      <Label htmlFor="cardCvc">Security code (CVC)</Label>
+                      <Input 
+                        id="cardCvc" 
+                        placeholder="123" 
+                        type="password"
+                        required 
+                        className="h-11 rounded-xl"
+                        value={cardCvc}
+                        onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, ""))}
+                        maxLength={4}
+                      />
                     </div>
                   </div>
                 </div>
