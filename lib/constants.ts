@@ -131,8 +131,8 @@ export const FOOTER_LINKS = {
 } as const;
 
 export const SOCIAL_LINKS = [
-  { label: "Instagram", href: "https://instagram.com/gymnation", icon: "Instagram" },
-  { label: "Twitter", href: "https://twitter.com/gymnation", icon: "Twitter" },
-  { label: "Facebook", href: "https://facebook.com/gymnation", icon: "Facebook" },
-  { label: "YouTube", href: "https://youtube.com/gymnation", icon: "Youtube" },
+  { label: "Instagram", href: "#", icon: "Instagram" },
+  { label: "X", href: "#", icon: "X" },
+  { label: "Facebook", href: "#", icon: "Facebook" },
+  { label: "YouTube", href: "#", icon: "Youtube" },
 ] as const;
